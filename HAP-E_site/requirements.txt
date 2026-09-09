@@ -1,0 +1,17 @@
+# HAP-E_site dependencies. Recreate the env with:
+#   python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+# GoEmotions analysis (4a-6a):
+pandas
+numpy
+pyarrow
+matplotlib
+scipy
+ipykernel
+# Website JSON build (HAP-E_website_json.ipynb): Biber MDA + per-token tagging.
+pybiber
+polars
+click       # spaCy (a pybiber dep) needs it; not always auto-pulled on Python 3.14
+# GoEmotions inference (4a on CUDA, 4d on Apple Silicon/MPS). ModernBERT needs transformers>=4.48.
+transformers>=4.48
+torch       # Apple Silicon: the default wheel already carries the MPS backend
+nltk        # Punkt sentence splitter used by 4d (falls back to regex if unavailable)

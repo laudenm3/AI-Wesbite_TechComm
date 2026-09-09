@@ -1,0 +1,464 @@
+{
+  "authorA": "human",
+  "authorB": "gemini-3.1-pro",
+  "source": "abstracts",
+  "exampleGenre": "abs",
+  "scopeLabel": "across 650 parallel abstracts (same paper, human vs AI)",
+  "metric": "log2_ratio_vs_human (add-0.5 smoothed)",
+  "emotionMeta": {
+    "admiration": {
+      "valence": "positive"
+    },
+    "amusement": {
+      "valence": "positive"
+    },
+    "anger": {
+      "valence": "negative"
+    },
+    "annoyance": {
+      "valence": "negative"
+    },
+    "approval": {
+      "valence": "positive"
+    },
+    "caring": {
+      "valence": "positive"
+    },
+    "confusion": {
+      "valence": "ambiguous"
+    },
+    "curiosity": {
+      "valence": "ambiguous"
+    },
+    "desire": {
+      "valence": "positive"
+    },
+    "disappointment": {
+      "valence": "negative"
+    },
+    "disapproval": {
+      "valence": "negative"
+    },
+    "disgust": {
+      "valence": "negative"
+    },
+    "embarrassment": {
+      "valence": "negative"
+    },
+    "excitement": {
+      "valence": "positive"
+    },
+    "fear": {
+      "valence": "negative"
+    },
+    "gratitude": {
+      "valence": "positive"
+    },
+    "grief": {
+      "valence": "negative"
+    },
+    "joy": {
+      "valence": "positive"
+    },
+    "love": {
+      "valence": "positive"
+    },
+    "nervousness": {
+      "valence": "negative"
+    },
+    "optimism": {
+      "valence": "positive"
+    },
+    "pride": {
+      "valence": "positive"
+    },
+    "realization": {
+      "valence": "ambiguous"
+    },
+    "relief": {
+      "valence": "positive"
+    },
+    "remorse": {
+      "valence": "negative"
+    },
+    "sadness": {
+      "valence": "negative"
+    },
+    "surprise": {
+      "valence": "ambiguous"
+    }
+  },
+  "emotionLoadings": {
+    "gemini-3.1-pro": {
+      "admiration": -2.8866900835315605,
+      "amusement": 0.23669233197372172,
+      "anger": 0.23669233197372172,
+      "annoyance": 0.23669233197372172,
+      "approval": -0.44346690657401167,
+      "caring": -1.3482701687474345,
+      "confusion": -2.265808008555462,
+      "curiosity": 0.23669233197372172,
+      "desire": -1.3482701687474345,
+      "disappointment": -0.2938223847250581,
+      "disapproval": -2.0852357629136407,
+      "disgust": 0.23669233197372172,
+      "embarrassment": 0.23669233197372172,
+      "excitement": -1.3482701687474345,
+      "fear": 0.23669233197372172,
+      "gratitude": -4.286869624083291,
+      "grief": 0.23669233197372172,
+      "joy": 0.23669233197372172,
+      "love": 0.23669233197372172,
+      "nervousness": 0.23669233197372172,
+      "optimism": -5.544667381550938,
+      "pride": 0.23669233197372172,
+      "realization": -3.222739286663576,
+      "relief": 0.23669233197372172,
+      "remorse": 0.23669233197372172,
+      "sadness": -1.3482701687474345,
+      "surprise": -2.9332326694685906
+    }
+  },
+  "emotionRates": {
+    "human": {
+      "n": 5643,
+      "rates": {
+        "admiration": 0.00531632110579479,
+        "amusement": 0.0,
+        "anger": 0.0,
+        "annoyance": 0.0,
+        "approval": 0.03668261562998405,
+        "caring": 0.000177210703526493,
+        "confusion": 0.001417685628211944,
+        "curiosity": 0.0,
+        "desire": 0.000177210703526493,
+        "disappointment": 0.001063264221158958,
+        "disapproval": 0.003012581959950381,
+        "disgust": 0.0,
+        "embarrassment": 0.0,
+        "excitement": 0.000177210703526493,
+        "fear": 0.0,
+        "gratitude": 0.001949317738791423,
+        "grief": 0.0,
+        "joy": 0.0,
+        "love": 0.0,
+        "nervousness": 0.0,
+        "optimism": 0.004784688995215311,
+        "pride": 0.0,
+        "realization": 0.000886053517632465,
+        "relief": 0.0,
+        "remorse": 0.000177210703526493,
+        "sadness": 0.000177210703526493,
+        "surprise": 0.000708842814105972
+      }
+    },
+    "gemini-3.1-pro": {
+      "n": 4789,
+      "rates": {
+        "admiration": 0.0006264355815410315,
+        "amusement": 0.0,
+        "anger": 0.0,
+        "annoyance": 0.0,
+        "approval": 0.026936730006264356,
+        "caring": 0.0,
+        "confusion": 0.00020881186051367718,
+        "curiosity": 0.0,
+        "desire": 0.0,
+        "disappointment": 0.0008352474420547087,
+        "disapproval": 0.0006264355815410315,
+        "disgust": 0.0,
+        "embarrassment": 0.0,
+        "excitement": 0.0,
+        "fear": 0.0,
+        "gratitude": 0.0,
+        "grief": 0.0,
+        "joy": 0.0,
+        "love": 0.0,
+        "nervousness": 0.0,
+        "optimism": 0.0,
+        "pride": 0.0,
+        "realization": 0.0,
+        "relief": 0.0,
+        "remorse": 0.00020881186051367718,
+        "sadness": 0.0,
+        "surprise": 0.0
+      }
+    }
+  },
+  "paragraphs": [
+    {
+      "baseId": "abs_0202",
+      "doi": "10.1016/j.applthermaleng.2022.118739",
+      "topic": "Abstract 1",
+      "contrast": 0.4444444444444444,
+      "examples": [
+        {
+          "aSentences": [
+            {
+              "s": "For a long time, shell-and-tube heat exchangers have been the most common choice in the industry.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "Despite some limitations, their main advantage is that they have been extensively investigated and reliable design tools are readily available.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "In other words, any alternative design should not only outperform shell-and-tube heat exchangers, but also be equipped with a comparably reliable and robust design platform for engineers.",
+              "e": []
+            },
+            {
+              "s": "In recent years, a growing market share can be observed for plate heat exchangers, particularly for a special class known as pillow-plate heat exchangers.",
+              "e": []
+            },
+            {
+              "s": "Recently, the research on pillow-plate heat exchangers has gained momentum primarily due to their relative low cost, compact design and structural integrity.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "However, a comprehensive literature review on the advancements so far and challenges ahead of their widespread application is missing.",
+              "e": []
+            },
+            {
+              "s": "This study aims to fill this gap in the literature by systematically, critically and comprehensively surveying earlier studies on pillow-plate heat exchangers and providing an in-depth discussion regarding the achievements so far.",
+              "e": []
+            },
+            {
+              "s": "The findings of this study are expected to help direct the forthcoming research on pillow-plate heat exchangers, especially towards more robust design tools.",
+              "e": [
+                "optimism"
+              ]
+            },
+            {
+              "s": "Overall, further investigation is needed on cost, plate material, flow configuration, heat transfer enhancement, correlation development, two-phase flow, etc.",
+              "e": []
+            }
+          ],
+          "bSentences": [
+            {
+              "s": "Pillow-plate heat exchangers (PPHXs) have emerged as a compact, energy-efficient alternative to conventional shell-and-tube and plate heat exchangers, offering distinctive advantages in structural integrity and thermohydraulic performance.",
+              "e": []
+            },
+            {
+              "s": "This paper presents a comprehensive review of the state-of-the-art regarding the design, manufacturing, and operational characteristics of PPHXs.",
+              "e": []
+            },
+            {
+              "s": "The study details the hydroforming fabrication process and the resulting complex geometries, proposing a standardized terminology to resolve inconsistencies in the literature regarding geometric parameters such as pitch patterns and weld-spot configurations.",
+              "e": []
+            },
+            {
+              "s": "Extensive analysis is provided on existing experimental and numerical investigations, specifically evaluating friction factor and Nusselt number correlations for both inner and outer channels across various flow regimes.",
+              "e": []
+            },
+            {
+              "s": "While longitudinal pitch patterns and single-phase inner channel flows are relatively well-characterized, the review highlights significant literature gaps regarding outer channel hydrodynamics, transversal configurations, and two-phase flow phenomena.",
+              "e": []
+            },
+            {
+              "s": "Furthermore, the paper examines diverse applications, ranging from traditional roles as condensers and reboilers in distillation columns to emerging utilizations in falling film evaporation and latent heat thermal energy storage systems.",
+              "e": []
+            },
+            {
+              "s": "Concluding with a critical assessment of current design tools, this work identifies key areas for future research, including geometric optimization, the investigation of alternative plate materials, and the development of generalized correlations for broader industrial application.",
+              "e": []
+            }
+          ],
+          "aSummary": {
+            "nSent": 9,
+            "nPos": 4,
+            "nNeg": 0,
+            "nEmo": 4
+          },
+          "bSummary": {
+            "nSent": 7,
+            "nPos": 0,
+            "nNeg": 0,
+            "nEmo": 0
+          }
+        }
+      ]
+    },
+    {
+      "baseId": "abs_0521",
+      "doi": "10.1016/j.robot.2022.104096",
+      "topic": "Abstract 2",
+      "contrast": 0.42857142857142855,
+      "examples": [
+        {
+          "aSentences": [
+            {
+              "s": "Behavior Trees (BTs) were invented as a tool to enable modular AI in computer games, but have received an increasing amount of attention in the robotics community in the last decade.",
+              "e": []
+            },
+            {
+              "s": "With rising demands on agent AI complexity, game programmers found that the Finite State Machines (FSM) that they used scaled poorly and were difficult to extend, adapt and reuse.",
+              "e": [
+                "disappointment"
+              ]
+            },
+            {
+              "s": "In BTs, the state transition logic is not dispersed across the individual states, but organized in a hierarchical tree structure, with the states as leaves.",
+              "e": []
+            },
+            {
+              "s": "This has a significant effect on modularity, which in turn simplifies both synthesis and analysis by humans and algorithms alike.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "These advantages are needed not only in game AI design, but also in robotics, as is evident from the research being done.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "In this paper we present a comprehensive survey of the topic of BTs in Artificial Intelligence and Robotic applications.",
+              "e": []
+            },
+            {
+              "s": "The existing literature is described and categorized based on methods, application areas and contributions, and the paper is concluded with a list of open research challenges.",
+              "e": []
+            }
+          ],
+          "bSentences": [
+            {
+              "s": "Behavior Trees (BTs) originated in the computer game industry as a modular tool for designing complex autonomous agents and have recently emerged as a prominent control architecture in the field of robotics.",
+              "e": []
+            },
+            {
+              "s": "This paper presents a comprehensive survey of the state of the art in BTs, analyzing over 160 research papers covering AI and robotics applications.",
+              "e": []
+            },
+            {
+              "s": "We begin by introducing the core theory and formal definitions of BTs, illustrating their advantages in modularity, reactivity, and hierarchical task switching compared to traditional Finite State Machines.",
+              "e": []
+            },
+            {
+              "s": "The survey categorizes the literature based on application domains, ranging from real-time strategy games to robotic manipulators, mobile ground robots, and unmanned aerial vehicles.",
+              "e": []
+            },
+            {
+              "s": "Additionally, we examine methodologies for the manual design and automatic synthesis of BTs, utilizing techniques from planning, reinforcement learning, and evolutionary algorithms.",
+              "e": []
+            },
+            {
+              "s": "The review also provides an overview of existing software libraries for BT implementation and concludes by identifying critical open research challenges, including explainable AI, human-robot interaction, and safety guarantees for autonomous systems.",
+              "e": []
+            }
+          ],
+          "aSummary": {
+            "nSent": 7,
+            "nPos": 2,
+            "nNeg": 1,
+            "nEmo": 3
+          },
+          "bSummary": {
+            "nSent": 6,
+            "nPos": 0,
+            "nNeg": 0,
+            "nEmo": 0
+          }
+        }
+      ]
+    },
+    {
+      "baseId": "abs_0004",
+      "doi": "10.1016/j.enconman.2022.115892",
+      "topic": "Abstract 3",
+      "contrast": 0.42857142857142855,
+      "examples": [
+        {
+          "aSentences": [
+            {
+              "s": "Torrefaction of biomass is a promising pre-treatment process capable of substantially improving the properties of raw biomass for its use as a solid biofuel, among many other potential applications.",
+              "e": [
+                "optimism"
+              ]
+            },
+            {
+              "s": "Oxygen-lean torrefaction can effectively reduce the cost and complexity of inert torrefaction.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "In this work, torrefaction tests of crushed olive stones were conducted in a thermogravimetric analyzer in various oxygen concentrations, under both non-isothermal and isothermal conditions.",
+              "e": []
+            },
+            {
+              "s": "Non-isothermal torrefaction measurements were used to gain fundamental knowledge on the inert and oxidative torrefaction processes by applying a model-fitting kinetics method.",
+              "e": []
+            },
+            {
+              "s": "Analysis of these measurements showed that an accurate description of inert torrefaction based on a two-step reaction mechanism is possible, whereas a three-step reaction mechanism is necessary for oxidative torrefaction.",
+              "e": []
+            },
+            {
+              "s": "The new three-step mechanism was found to be accurate for describing the global mass loss during isothermal torrefaction, obtaining average root mean squared errors between the model predictions and the TGA measurements below 2.0 % for inert and oxidative torrefaction of olive stones.",
+              "e": [
+                "approval"
+              ]
+            },
+            {
+              "s": "Furthermore, predictions using the extended mechanism were in good agreement with the more fundamental torrefaction reactions derived from the kinetics analysis of the non-isothermal torrefaction measurements.",
+              "e": []
+            }
+          ],
+          "bSentences": [
+            {
+              "s": "Torrefaction is a promising thermal pretreatment to upgrade lignocellulosic biomass for energy applications, yet the kinetics of oxidative torrefaction remain less understood than those of the inert process.",
+              "e": []
+            },
+            {
+              "s": "This study investigates the torrefaction kinetics of olive stones under both inert (nitrogen) and oxidative (oxygen concentrations of 5, 10, and 21 vol%) atmospheres using thermogravimetric analysis (TGA).",
+              "e": []
+            },
+            {
+              "s": "Experiments were conducted under non-isothermal conditions at five heating rates ranging from 1 to 10 K/min, and isothermal conditions between 200 and 300 \u00b0C.",
+              "e": []
+            },
+            {
+              "s": "A model-fitting kinetic analysis of the non-isothermal data revealed that while the standard 2-step mechanism adequately describes inert torrefaction, oxidative conditions require additional reaction pathways.",
+              "e": []
+            },
+            {
+              "s": "Consequently, an extended 2-step first-order kinetic model was developed to account for the simultaneous thermal degradation and heterogeneous oxidation of the biomass fractions.",
+              "e": []
+            },
+            {
+              "s": "The proposed mechanism includes specific rate constants for the oxidation of the initial biomass, the intermediate solid, and the final residue.",
+              "e": []
+            },
+            {
+              "s": "The model was validated against independent experimental datasets, demonstrating robust predictive capability with Root Mean Square Errors (RMSE) below 2%.",
+              "e": []
+            },
+            {
+              "s": "The results indicate that oxygen availability significantly accelerates mass loss and that the oxidation of the solid residue becomes a governing factor at higher oxygen concentrations and longer residence times.",
+              "e": []
+            }
+          ],
+          "aSummary": {
+            "nSent": 7,
+            "nPos": 3,
+            "nNeg": 0,
+            "nEmo": 3
+          },
+          "bSummary": {
+            "nSent": 8,
+            "nPos": 0,
+            "nNeg": 0,
+            "nEmo": 0
+          }
+        }
+      ]
+    }
+  ]
+}
