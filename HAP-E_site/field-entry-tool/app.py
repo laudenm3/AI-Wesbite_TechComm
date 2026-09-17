@@ -16,6 +16,7 @@ import io
 import json
 
 import streamlit as st
+import streamlit.components.v1 as components
 from docx import Document
 
 st.set_page_config(page_title="Exercise Field", layout="centered")
@@ -93,7 +94,7 @@ else:
         )
 
         payload = {"type": "fieldSync", "field": field_id, "label": label, "value": value}
-        st.iframe(
+        components.html(
             f"<script>window.parent.parent.postMessage({json.dumps(payload)}, '*');</script>",
-            height=0,
+            height=1,
         )
