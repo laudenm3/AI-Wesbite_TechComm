@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 Activity — More Human Instructions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: #1c1c2e; min-height: 100vh; }
+  .site-header { background: #1c1c2e; padding: 32px 40px 28px; border-bottom: 1px solid #2e2e42; }
+  .back-link { display: inline-block; font-size: 0.8rem; color: #b0aec8; text-decoration: none; margin-bottom: 16px; letter-spacing: 0.04em; }
+  .back-link:hover { color: #f5f0e8; }
+  .site-kicker { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #c4a882; margin-bottom: 8px; }
+  .site-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #f5f0e8; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .site-sub { font-size: 0.85rem; color: #b0aec8; font-style: italic; max-width: 720px; line-height: 1.6; }
+  .body { background: #faf8f4; padding: 36px 40px 60px; }
+  .inner { max-width: 860px; margin: 0 auto; }
+
+  .goals { background: #fff; border: 1px solid #e0dbd2; padding: 22px 26px; margin-bottom: 30px; font-size: 0.92rem; line-height: 1.75; color: #3a3530; }
+  .goals p { margin-bottom: 12px; } .goals p:last-child { margin-bottom: 0; }
+  .goals ul { margin: 8px 0 12px 20px; } .goals li { margin-bottom: 6px; }
+
+  .part-head { display: flex; align-items: baseline; gap: 12px; margin: 38px 0 6px; }
+  .part-num { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6b5030; }
+  .part-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: #1c1c2e; }
+  .part-note { font-size: 0.87rem; color: #5a5248; margin-bottom: 18px; line-height: 1.65; }
+
+  .steps { counter-reset: step; margin-bottom: 20px; }
+  .step { background: #fff; border: 1px solid #e0dbd2; padding: 15px 20px 15px 58px; margin-bottom: 10px; position: relative; font-size: 0.91rem; line-height: 1.7; color: #2a2520; }
+  .step::before { counter-increment: step; content: counter(step); position: absolute; left: 18px; top: 14px; width: 26px; height: 26px; border-radius: 50%; background: #1c1c2e; color: #c4a882; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
+
+  .refusal { background: #f0eef8; border: 1px solid #c8c2e0; border-left: 3px solid #5a4d8c; padding: 16px 20px; margin-bottom: 22px; font-size: 0.88rem; line-height: 1.7; color: #322a52; }
+  .refusal .lbl { font-weight: 600; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 5px; color: #5a4d8c; }
+
+  .sample-toggle { display: block; width: 100%; text-align: left; background: #1c1c2e; color: #f5f0e8; border: none; border-radius: 3px; padding: 13px 18px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; }
+  .sample-toggle .arrow { display: inline-block; transition: transform 0.2s; margin-right: 8px; font-size: 0.7rem; color: #c4a882; }
+  .sample-toggle.open .arrow { transform: rotate(90deg); }
+  .sample-panel { display: none; border: 1px solid #e0dbd2; border-top: none; background: #fff; padding: 20px 24px; margin-bottom: 22px; }
+  .sample-panel.open { display: block; }
+  .passage { background: #f5f0e8; border-left: 3px solid #c4a882; padding: 14px 18px; font-size: 0.92rem; line-height: 1.8; color: #2a201a; margin-bottom: 10px; }
+  .passage p { margin-bottom: 10px; } .passage p:last-child { margin-bottom: 0; }
+  .passage ul { margin: 6px 0 10px 22px; } .passage li { margin-bottom: 5px; }
+  .gen-note { font-size: 0.78rem; color: #8a8278; font-style: italic; }
+
+  .lens-card { background: #fff; border: 1px solid #e0dbd2; margin-bottom: 16px; }
+  .lens-head { padding: 14px 20px 10px; border-bottom: 1px solid #e8e2d8; }
+  .lens-tag { display: inline-block; padding: 2px 10px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 2px; background: #1c1c2e; color: #c4a882; margin-bottom: 6px; }
+  .lens-title { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700; color: #1c1c2e; }
+  .lens-body { padding: 14px 20px 18px; font-size: 0.89rem; line-height: 1.7; color: #3a3530; }
+  .lens-body ul { margin: 6px 0 12px 20px; } .lens-body li { margin-bottom: 6px; }
+  .write-area { width: 100%; min-height: 70px; padding: 10px 12px; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.89rem; line-height: 1.65; border: 1.5px solid #d8cfc0; border-radius: 3px; background: #faf8f4; color: #1c1c2e; resize: vertical; outline: none; display: block; }
+  .write-area:focus { border-color: #c4a882; }
+
+  /* Embedded Streamlit text-entry field (replaces .write-area for the drafting exercises below) */
+  .write-area-frame { width: 100%; border: none; display: block; background: transparent; }
+
+  .save-all-btn { display: block; width: 100%; text-align: center; background: #2a6a40; color: #fff; border: none; border-radius: 3px; padding: 14px 18px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.02em; margin: 18px 0 8px; }
+  .save-all-btn:hover { background: #235c37; }
+  .save-hint { font-size: 0.8rem; color: #8a8278; font-style: italic; margin-bottom: 4px; }
+
+  .hint-box { background: #fffbf2; border: 1px solid #e8d9b0; border-left: 3px solid #d4a840; padding: 12px 16px; font-size: 0.85rem; line-height: 1.65; color: #5a4020; margin-bottom: 16px; }
+
+  .deliver { background: #eaf4ee; border: 1px solid #b8d4c2; border-left: 3px solid #4a8c5c; padding: 16px 20px; margin-top: 30px; font-size: 0.9rem; line-height: 1.7; color: #1a3a28; }
+  .deliver .lbl { font-weight: 600; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; color: #2a6a40; }
+  .deliver ul { margin: 4px 0 0 20px; } .deliver li { margin-bottom: 5px; }
+
+  .print-tip { font-size: 0.78rem; color: #8a8278; font-style: italic; margin-top: 8px; }
+  .footer-note { margin-top: 40px; padding-top: 18px; border-top: 1px solid #e0dbd2; font-size: 0.8rem; color: #8a8278; line-height: 1.65; }
+  @media (max-width: 620px) { .site-header { padding: 24px 20px 22px; } .body { padding: 26px 18px 50px; } }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <a class="back-link" href="index.html">← All resources</a>
+  <div class="site-kicker">Course Unit 2 · Instructional Design</div>
+  <div class="site-title">More Human Instructions</div>
+  <div class="site-sub">A small-group activity: have an LLM write instructions for a tool your group knows well, take the instructions apart by asking three kinds of questions, and then rewrite them the way you'd explain the tool to a friend or family member.</div>
+</div>
+
+<div class="body"><div class="inner">
+
+  <div class="goals">
+    <p><strong>What you'll do and why.</strong> Instructional writing is where AI-inflected style can do the most practical damage, because a confused reader is less likely to successfully complete the task. The best test of instructional clarity is a knowledgeable insider: someone who knows the tool or procedure well enough to notice where the document skips things, gets the order wrong, or dresses simple actions up in formal language. That's where your group comes in. You'll pick a tool you all know, prompt an LLM to document it, and evaluate the result the way real users would.</p>
+    <p>By the end your group should be able to:</p>
+    <ul>
+      <li>analyze instructions for their language style, supplementary discussion, and formatting;</li>
+      <li>explain what good instructional writers add beyond a bare list of steps;</li>
+      <li>rewrite a flawed section so a genuine novice could follow it.</li>
+    </ul>
+  </div>
+
+  <div class="part-head"><span class="part-num">Part 1</span><span class="part-title">Generate the instructions</span></div>
+  <div class="part-note">Groups of 3–4. Budget about 10 minutes for this part.</div>
+
+  <div class="steps">
+    <div class="step">Agree on a piece of software, an app, or a tool that <em>everyone</em> in your group knows well: a game you all play, an app you all use daily, a lab tool, a campus system. The more insider knowledge your group has about it, the better.</div>
+    <div class="step">In the university-licensed LLM chatbot, prompt: <em>"Write instructions for installing and getting started with [your tool] for someone who has never used it."</em> Don't add style guidance.</div>
+    <div class="step">Read the output together once, silently, before discussing. Note your first reactions individually.</div>
+  </div>
+
+  <div class="refusal">
+    <span class="lbl">Prefer not to use AI? That's always an option in this course.</span>
+    If your group opts out (or can't agree on a shared tool), you can analyze the previously-generated example below instead. It documents an app that most students know, so your insider knowledge still applies.
+  </div>
+
+  <button class="sample-toggle" id="sampleToggle"><span class="arrow">▶</span>Previously-generated example: LLM instructions for getting started with Zoom</button>
+  <div class="sample-panel" id="samplePanel">
+    <div class="passage">
+      <p><strong>Getting Started with Zoom: Installation and Initial Configuration</strong></p>
+      <p>Zoom is a comprehensive video communications platform facilitating seamless virtual collaboration across diverse organizational and educational contexts. The successful utilization of Zoom's robust feature set requires the completion of several foundational configuration processes, encompassing application installation, account creation, and audio-visual optimization.</p>
+      <p><strong>Installation Process</strong></p>
+      <ul>
+        <li>Navigate to the official Zoom download center, ensuring the selection of the appropriate client version corresponding to your operating system.</li>
+        <li>Initiate the download of the Zoom Workplace desktop client.</li>
+        <li>The execution of the installer file enables the commencement of the installation process.</li>
+        <li>Upon completion of the installation, the application launch process can be initiated.</li>
+      </ul>
+      <p><strong>Account Creation and Configuration</strong></p>
+      <ul>
+        <li>The creation of a Zoom account is achievable through multiple authentication pathways, including email-based registration and single sign-on integration leveraging existing institutional credentials.</li>
+        <li>Following successful authentication, users gain access to a comprehensive settings interface enabling the customization of meeting preferences, notification parameters, and accessibility configurations.</li>
+      </ul>
+      <p><strong>Joining Your First Meeting</strong></p>
+      <ul>
+        <li>Meeting participation is facilitated through the utilization of meeting IDs or invitation links distributed by meeting hosts.</li>
+        <li>The verification of audio and video functionality prior to meeting entry ensures an optimized participation experience.</li>
+      </ul>
+    </div>
+    <div class="gen-note">These instructions were generated with a general-purpose LLM chatbot, and they have not been edited. They're included here so that groups practicing AI refusal can complete the analysis without generating text themselves.</div>
+  </div>
+
+  <div class="part-head"><span class="part-num">Part 2</span><span class="part-title">Analyze by asking three kinds of questions</span></div>
+  <div class="part-note">Assign one question set per group member (double up in groups of four), discuss together, and record your findings. Notes stay on your screen only; copy them out before closing the page.</div>
+
+  <div class="lens-card">
+    <div class="lens-head"><span class="lens-tag">Question set 1</span><div class="lens-title">Language style: is it dense and disconnected to the point of confusing the user?</div></div>
+    <div class="lens-body">
+      <ul>
+        <li>Hunt for nominalizations that bury the action the user must take ("the execution of the installer file" vs. "double-click the installer"). Who is the subject of each step, and is it the reader?</li>
+        <li>Find the densest noun phrase. Would a first-time user know what to physically do after reading it?</li>
+        <li>Where would a plain imperative verb ("click," "type," "wait") have been clearer?</li>
+      </ul>
+      <textarea class="write-area" placeholder="Quote two or three examples and note the plain-language fix for each…"></textarea>
+    </div>
+  </div>
+
+  <div class="lens-card">
+    <div class="lens-head"><span class="lens-tag">Question set 2</span><div class="lens-title">Supplementary discussion: does it explain things the way you would to a friend or family member?</div></div>
+    <div class="lens-body">
+      <ul>
+        <li>When you help someone install this tool in person, what do you warn them about? Is any of that here?</li>
+        <li>Good instructions explain <em>why</em> a step matters, flag what can go wrong, and say what success looks like ("you'll see a green checkmark"). Where is this missing?</li>
+        <li>Your insider knowledge: what did the document get wrong, skip, or describe in a way no actual user would recognize?</li>
+      </ul>
+      <textarea class="write-area" placeholder="List the tips, warnings, and 'what you'll see' details a friendly expert would have added…"></textarea>
+    </div>
+  </div>
+
+  <div class="lens-card">
+    <div class="lens-head"><span class="lens-tag">Question set 3</span><div class="lens-title">Formatting: does the layout match the logic of the task?</div></div>
+    <div class="lens-body">
+      <ul>
+        <li>Sequential steps should be <em>numbered</em>, because order matters and users need to keep their place. Did the document use bullets where it should have used numbers?</li>
+        <li>Is each step one action, or are several actions packed into one item?</li>
+        <li>Where would a screenshot, a caution box, or a "before you begin" list have helped?</li>
+      </ul>
+      <textarea class="write-area" placeholder="Note specific places where the formatting works against understanding…"></textarea>
+    </div>
+  </div>
+
+  <div class="hint-box"><strong>Discussion checkpoint:</strong> as a group, decide which set of questions revealed the most serious problem. Style issues make instructions unpleasant to read, but which failures make them actually unusable?</div>
+
+  <div class="part-head"><span class="part-num">Part 3</span><span class="part-title">Rewrite it</span></div>
+  <div class="part-note">Together, rewrite one full section (installation is usually the best candidate) so a genuine novice could follow it. Requirements: numbered steps, one action per step, the reader as the subject of every instruction, at least one tip or warning drawn from your group's real experience with the tool, and a "what you'll see" detail confirming success. Also, be sure to indicate where you would add visual elements such as screenshots or caution boxes.</div>
+
+  <iframe class="write-area-frame" data-field="rewrite" title="Part 3 — Instructions Rewrite"></iframe>
+  <div class="print-tip">Tip: your answers only live in this browser tab until you click Save below — download your .docx before you close the tab.</div>
+
+  <div class="part-head"><span class="part-num">Part 4</span><span class="part-title">Compare and reflect</span></div>
+  <div class="part-note">Put the original and the rewrite side by side and answer together:</div>
+  <div class="lens-card"><div class="lens-body">
+    <ul>
+      <li>What knowledge did your rewrite depend on that the LLM couldn't have had?</li>
+      <li>Which differences are style fixes, and which are content the model simply didn't know to include?</li>
+      <li>The LLM produced its version in seconds and yours took twenty minutes. For which audiences and situations is the twenty-minute version worth it, and are there any where it isn't?</li>
+    </ul>
+    <iframe class="write-area-frame" data-field="part4_reflection" title="Part 4 — Reflection"></iframe>
+  </div></div>
+
+  <div class="save-hint">Saving bundles your Part 3 rewrite and Part 4 reflection above into one Word document. (The Part 2 question-set notes aren't included — copy those out separately.) Click outside your last text box before saving so it registers.</div>
+  <button class="save-all-btn" id="saveAllBtn" type="button">⬇️ Save all answers as Word document</button>
+
+  <div class="deliver">
+    <span class="lbl">Bring to class / submit (one per group)</span>
+    <ul>
+      <li>The generated instructions (or the previously-generated example) with your notes on all three question sets.</li>
+      <li>Your rewritten section.</li>
+      <li>Your Part 4 reflection answers.</li>
+    </ul>
+  </div>
+
+  <div class="footer-note">Part of <a href="index.html" style="color:#6b5030;">Writing Against AI Slop</a> · Calvin Pollak · University of Washington. The style framework is drawn from Markey et al. (2024) and Reinhart et al. (2025); the refusal option follows Sano-Franchini, McIntyre, &amp; Fernandes, "Refusing GenAI in Writing Studies."</div>
+
+</div></div>
+
+<script>
+const t = document.getElementById('sampleToggle');
+t.addEventListener('click', () => {
+  t.classList.toggle('open');
+  document.getElementById('samplePanel').classList.toggle('open');
+});
+
+// ── Embedded exercise fields (Streamlit, running locally at FIELD_APP_BASE) ──
+// Each field below renders as its own <iframe>; this app blends its own
+// text box into the page's look and broadcasts every edit up via
+// postMessage so this page can bundle everything into one .docx.
+const FIELD_APP_BASE = "http://localhost:8503/";
+
+const FIELDS = [
+  { id: "rewrite", label: "Part 3 — Instructions Rewrite", placeholder: "Draft your group's rewrite here, or in a shared doc…", height: 200 },
+  { id: "part4_reflection", label: "Part 4 — Reflection", placeholder: "Record your group's answers…", height: 140 },
+];
+
+const fieldValues = {};
+
+window.addEventListener("message", (event) => {
+  const data = event.data;
+  if (data && data.type === "fieldSync" && data.field) {
+    fieldValues[data.field] = data.value;
+  }
+});
+
+FIELDS.forEach((f) => {
+  const iframe = document.querySelector(`iframe[data-field="${f.id}"]`);
+  if (!iframe) return;
+  const url = new URL(FIELD_APP_BASE);
+  url.searchParams.set("embed", "true");
+  url.searchParams.set("field", f.id);
+  url.searchParams.set("label", f.label);
+  url.searchParams.set("placeholder", f.placeholder);
+  url.searchParams.set("height", f.height);
+  iframe.src = url.toString();
+  iframe.style.height = (f.height + 24) + "px";
+});
+
+document.getElementById("saveAllBtn").addEventListener("click", () => {
+  const payload = FIELDS.map((f) => ({ label: f.label, value: fieldValues[f.id] || "" }));
+  const url = new URL(FIELD_APP_BASE);
+  url.searchParams.set("embed", "true");
+  url.searchParams.set("combine", "1");
+  url.searchParams.set("data", JSON.stringify(payload));
+  window.open(url.toString(), "_blank");
+});
+</script>
+</body>
+</html>
