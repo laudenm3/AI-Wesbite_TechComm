@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing Against AI Slop — Calvin Pollak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:    #1a1410;
+    --cream:  #f5f0e8;
+    --warm:   #ede8de;
+    --gold:   #c4a882;
+    --dark-gold: #6b5030;
+    --muted:  #5a4f44;
+    --rule:   #d5ccc0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--ink);
+    padding: 56px 48px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -55deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.018) 40px,
+      rgba(255,255,255,0.018) 41px
+    );
+    pointer-events: none;
+  }
+
+  .header-inner { max-width: 820px; position: relative; }
+
+  .project-kicker {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .project-kicker::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 40px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: #f5f0e8;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  h1 em { font-style: italic; color: var(--gold); }
+
+  .header-sub {
+    font-size: 0.92rem;
+    color: #a09080;
+    font-style: italic;
+    margin-top: 6px;
+  }
+
+  main { max-width: 820px; padding: 52px 48px 80px; }
+
+  .about {
+    border-left: 3px solid var(--gold);
+    padding-left: 24px;
+    margin-bottom: 52px;
+  }
+
+  .about p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #2a201a;
+    margin-bottom: 14px;
+  }
+
+  .about p:last-child { margin-bottom: 0; }
+  .about a { color: var(--dark-gold); }
+
+  .beta-note {
+    font-size: 0.86rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  .byline {
+    margin-top: 20px;
+    font-size: 0.83rem;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+
+  .byline strong { color: var(--ink); font-weight: 600; }
+  .byline a { color: var(--dark-gold); }
+
+  .section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dark-gold);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .section-lede {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 52px;
+  }
+
+  .card {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+
+  .card:hover {
+    border-color: var(--dark-gold);
+    box-shadow: 0 4px 18px rgba(26,20,16,0.09);
+    transform: translateY(-2px);
+  }
+
+  .card-accent { width: 5px; flex-shrink: 0; background: var(--ink); }
+
+  .card.reading    .card-accent { background: #7a3a3a; }
+  .card.unit-1     .card-accent { background: #3a5273; }
+  .card.unit-2     .card-accent { background: #4a7a5c; }
+  .card.unit-3     .card-accent { background: #7a5a8c; }
+  .card.exercise-1 .card-accent { background: var(--ink); }
+  .card.exercise-2 .card-accent { background: #3a5273; }
+  .card.chatbot    .card-accent { background: #4a7a5c; }
+  .card.slides     .card-accent { background: var(--dark-gold); }
+
+  .card-body { padding: 22px 26px; flex: 1; }
+
+  .card-type {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dark-gold);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .card-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 22px 0 12px;
+    color: var(--rule);
+    font-size: 1.1rem;
+    transition: color 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  .card:hover .card-arrow {
+    color: var(--dark-gold);
+    transform: translateX(3px);
+  }
+
+  .research {
+    background: var(--warm);
+    border-left: 3px solid var(--dark-gold);
+    padding: 22px 26px;
+    margin-bottom: 52px;
+  }
+
+  .research p {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #3a3028;
+    margin-bottom: 10px;
+  }
+
+  .research p:last-child { margin-bottom: 0; }
+  .research a { color: var(--dark-gold); }
+
+  .research .cite {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.83rem;
+    display: block;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    line-height: 1.65;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 48px;
+    font-size: 0.78rem;
+    color: #9a9080;
+    line-height: 1.6;
+  }
+
+  footer a { color: var(--dark-gold); }
+
+  @media (max-width: 600px) {
+    header { padding: 40px 24px 36px; }
+    main { padding: 36px 24px 60px; }
+    footer { padding: 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="project-kicker">Teaching Resource</div>
+    <h1>Writing Against<br><em>AI Slop</em></h1>
+    <div class="header-sub">Practice exercises and course activities for Technical and Professional Communication</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="about">
+    <p><strong><a href="slides.pdf">ProComm 2026 slides here!</a></strong></p>
+      <p>I'm Calvin Pollak, an <a href="https://english.washington.edu/people/calvin-pollak">Assistant Teaching Professor of Technical and Professional Communication at the University of Washington</a>. In this project, I'm drawing from recent research on the peculiar language style of AI-generated text (<a href="https://journals.sagepub.com/doi/abs/10.1177/07410883241263528">Markey et al., 2024</a>; <a href="https://www.pnas.org/doi/abs/10.1073/pnas.2422455122">Reinhart et al., 2025</a>). I call this language style "AI slop". When I first read these articles, I immediately wanted to operationalize their findings about the specific features of slop into teaching resources for Technical and Professional Communication. Thus, this website includes practice exercises and in-class activities for my TPC students at UW. It's now organized to follow the course itself: the assigned readings come first, and then there is one activity page for each of the three major projects.</p>
+    <p>The materials are designed to give students practice recognizing AI slop language features, and writing and editing in ways that make their language sound more human, particularly in cover letters, instruction manuals, and proposals. Whenever I incorporate AI into the classroom, I give students options and opportunities to refuse use of the technology; students who practice refusal are given previously-generated examples to analyze and reflect upon instead of generating new examples themselves.</p>
+    <p class="beta-note">Note: This project is in beta testing and will be used in class beginning Autumn 2026. The exercises, chatbot, and research background/summaries included here were developed in a dialogic, iterative composition process with Claude. All text examples (including "more human" examples) are model-generated with extensive prompt engineering and post-generation editing by me. The previously-generated "slop" examples on the unit pages are the exception: they're unedited LLM output, and they're labeled as such.</p>
+    <div class="byline"><strong>Calvin Pollak</strong> · Assistant Teaching Professor of English (TPC) · University of Washington</div>
+  </div>
+
+  <div class="section-heading">Start Here · The Readings</div>
+  <div class="section-lede">All of the exercises and activities here are based on two corpus linguistics studies (linked above; cited in full at the bottom of this homepage). Read the articles first, and then check your understanding in this section.</div>
+
+  <div class="cards">
+    <a class="card reading" href="Pollak_ReadingCheck_7-13-26.html">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Reading Check</div>
+        <div class="card-title">How LLMs Actually Write: Quiz &amp; Discussion Prompts</div>
+        <div class="card-desc">A self-graded comprehension quiz on Markey et al. (2024) and Reinhart et al. (2025), with five discussion prompts for class.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="section-heading">Course Units · In-Class Activities</div>
+  <div class="section-lede">There is one activity page for each major project. On each page, students generate a text with an LLM (or analyze a previously-generated example if they prefer not to), investigate its style, draft their own version, and edit it closely.</div>
+
+  <div class="cards">
+    <a class="card unit-1" href="Pollak_Unit1_CoverLetters_7-13-26.html">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Unit 1 · Job Application Package</div>
+        <div class="card-title">Anti-Slop Cover Letters</div>
+        <div class="card-desc">Students generate a cover letter from their own resume and a real job ad, investigate its peculiar style, and then draft their own letters "inside-out" from STAR stories.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card unit-2" href="Pollak_Unit2_Instructions_7-13-26.html">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Unit 2 · Instructional Design</div>
+        <div class="card-title">More Human Instructions</div>
+        <div class="card-desc">In small groups, students use an LLM to generate instructions for a tool they know well, analyze the output's style, supplementary discussion, and formatting, and then rewrite it themselves.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card unit-3" href="Pollak_Unit3_Proposals_7-13-26.html">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Unit 3 · Local Change Proposal</div>
+        <div class="card-title">Proposals for De-Slop-ification</div>
+        <div class="card-desc">Students inspect how a generated proposal overstates and underexplains its case, compose their own proposals from argument and narrative for a real decisionmaker, and closely edit their drafts.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="section-heading">Practice Anytime · Exercises &amp; Coach</div>
+  <div class="section-lede">These exercises give practice at the sentence and paragraph level, and they can be assigned before or alongside the unit activities.</div>
+
+  <div class="cards">
+    <a class="card exercise-1" href="Pollak_SlopVsHuman_style-comparison_3-3-26.html">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Exercise Set 1</div>
+        <div class="card-title">AI Slop Style vs. a More Human Style</div>
+        <div class="card-desc">Side-by-side paragraph comparisons and identification and transformation exercises across two writing styles.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card exercise-2" href="Pollak_SlopVsHuman_genre-exercises_3-3-26.html">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Exercise Set 2</div>
+        <div class="card-title">Writing in a More Human Style: Genre Exercises</div>
+        <div class="card-desc">Genre-specific exercises in cover letters, instructional documents, and proposals, with model answers.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card chatbot" href="https://claude.ai/public/artifacts/9cb59e90-6438-4ba4-bb86-06147f5811e6">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">AI Style Coach (Interactive · Requires free Claude.ai account)</div>
+        <div class="card-title">Chatbot Practice Tool</div>
+        <div class="card-desc">A conversational coach that gives guided exercises with detailed feedback, or analyses your own writing for AI slop features. Note: Claude.ai account required to use.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card slides" href="slides.pdf">
+      <div class="card-accent"></div>
+      <div class="card-body">
+        <div class="card-type">Slides (PDF)</div>
+        <div class="card-title">Less "Slop", More Human — IEEE ProComm 2026</div>
+        <div class="card-desc">Slides from the conference presentation, including the research context, the pedagogical framework, and each unit's activity design.</div>
+      </div>
+      <div class="card-arrow">↓</div>
+    </a>
+  </div>
+
+  <div class="section-heading">Research Background</div>
+
+  <div class="research">
+    <p>The style contrast underlying these materials is drawn from two corpus linguistics studies. <a href="https://journals.sagepub.com/doi/abs/10.1177/07410883241263528">Markey et al. (2024)</a> found that ChatGPT-generated text is significantly more informationally dense than even professional academic writing; it relies heavily on nominalizations and noun phrases, and is low on the hedges, modals of possibility, and co-ordinating conjunctions that keep human prose open and dialogic. They also found that it struggles to generate the kind of pedestrian, concrete examples that help clarify abstract concepts. <a href="https://www.pnas.org/doi/abs/10.1073/pnas.2422455122">Reinhart et al. (2025)</a> extended this analysis to multiple LLMs and found that instruction-tuned models use present participial clauses at 2–5× the human rate and nominalizations at roughly 1.5–2× the human rate. Some patterns turned out to be model-specific: the GPT-4o models avoid clausal co-ordination (they favor noun-to-noun phrasal co-ordination instead), while all of the Llama 3 variants use clausal co-ordination more than humans do. Importantly, base models wrote much closer to human norms, which suggests that instruction tuning introduces the style.</p>
+    <span class="cite">
+      Markey, B., Brown, D. W., Laudenbach, M., &amp; Kohler, A. (2024). <a href="https://journals.sagepub.com/doi/abs/10.1177/07410883241263528">Dense and disconnected: Analyzing the sedimented style of ChatGPT-generated text at scale</a>. <em>Written Communication, 41</em>(4), 571–600.<br><br>
+      Reinhart, A., Markey, B., Laudenbach, M., Pantusen, K., Yurko, R., Weinberg, G., &amp; Brown, D. W. (2025). <a href="https://www.pnas.org/doi/abs/10.1073/pnas.2422455122">Do LLMs write like humans? Variation in grammatical and rhetorical styles</a>. <em>Proceedings of the National Academy of Sciences, 122</em>(8), e2422455122.<br><br>
+      On students' right to refuse generative AI: Sano-Franchini, J., McIntyre, M., &amp; Fernandes, M. <a href="https://refusal.blog/">Refusing GenAI in Writing Studies: A Quickstart Guide</a>.
+    </span>
+  </div>
+
+</main>
+
+<footer>
+  <a href="https://english.washington.edu/people/calvin-pollak">Calvin Pollak</a> · University of Washington · These materials may be freely used and adapted for educational purposes.<br>
+  Please cite: Pollak, 2026. Writing Against AI Slop: Practice exercises for Technical and Professional Communication. Available from: https://cpollak-uw.github.io/ai-style-exercises/
+</footer>
+
+</body>
+</html>
