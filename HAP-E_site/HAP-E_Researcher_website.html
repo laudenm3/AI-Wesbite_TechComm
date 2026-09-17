@@ -333,14 +333,10 @@
       Intro text for the reflection worksheet tab goes here.
     </div>
 
-    <!-- ⑭ STREAMLIT APP URL — currently pointed at a locally-running instance for
-         development (run: cd reflection-tool && streamlit run app.py --server.port 8502).
-         When you're ready to deploy (e.g. to Streamlit Community Cloud at
-         share.streamlit.io), swap the src below for your app's public URL, keeping
-         "?embed=true" so Streamlit hides its own header/menu chrome and blends into
-         the page. -->
+    <!-- ⑭ STREAMLIT APP URL — deployed at reflection-tool.streamlit.app (Streamlit
+         Community Cloud), serving /reflection-tool/app.py from this repo. -->
     <iframe
-      src="http://localhost:8502/?embed=true"
+      src="https://reflection-tool.streamlit.app/?embed=true"
       style="width:100%; height:760px; border:1px solid #d9d4c0; border-radius:6px; background:#fff;"
       title="Reflection worksheet">
     </iframe>

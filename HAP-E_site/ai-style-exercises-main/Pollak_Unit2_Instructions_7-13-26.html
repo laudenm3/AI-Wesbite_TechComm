@@ -213,11 +213,11 @@ t.addEventListener('click', () => {
   document.getElementById('samplePanel').classList.toggle('open');
 });
 
-// ── Embedded exercise fields (Streamlit, running locally at FIELD_APP_BASE) ──
+// ── Embedded exercise fields (Streamlit app deployed at FIELD_APP_BASE) ──
 // Each field below renders as its own <iframe>; this app blends its own
 // text box into the page's look and broadcasts every edit up via
 // postMessage so this page can bundle everything into one .docx.
-const FIELD_APP_BASE = "http://localhost:8503/";
+const FIELD_APP_BASE = "https://field-entry-tool.streamlit.app/";
 
 const FIELDS = [
   { id: "rewrite", label: "Part 3 — Instructions Rewrite", placeholder: "Draft your group's rewrite here, or in a shared doc…", height: 200 },
