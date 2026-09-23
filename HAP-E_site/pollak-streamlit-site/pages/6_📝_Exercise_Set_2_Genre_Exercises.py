@@ -1,0 +1,4 @@
+from common.ui import render_page
+from metadata import exercise_set2_genre_exercises
+
+render_page(exercise_set2_genre_exercises)

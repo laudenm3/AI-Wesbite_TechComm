@@ -1,0 +1,4 @@
+from common.ui import render_page
+from metadata import exercise_set1_style_comparison
+
+render_page(exercise_set1_style_comparison)
