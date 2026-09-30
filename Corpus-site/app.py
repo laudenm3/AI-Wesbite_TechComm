@@ -159,8 +159,7 @@ else:
                 or []
             )
             st.caption(
-                "Colors use a fixed, colorblind-safe hue order (checked for deuteranopia "
-                "and protanopia). Don't rely on color alone: each highlight shows its tag "
+                "Don't rely on color alone: each highlight shows its tag "
                 "name on hover, and it appears in the legend above the text whenever 2+ "
                 "tags are selected."
             )
