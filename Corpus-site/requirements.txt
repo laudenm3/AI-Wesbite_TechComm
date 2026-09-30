@@ -1,0 +1,7 @@
+streamlit>=1.40
+docuscospacy
+polars
+spacy
+python-docx
+pypdf
+en_docusco_spacy @ https://huggingface.co/browndw/en_docusco_spacy/resolve/main/en_docusco_spacy-1.5-py3-none-any.whl
