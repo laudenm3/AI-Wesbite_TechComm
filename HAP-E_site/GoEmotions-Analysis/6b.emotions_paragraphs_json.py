@@ -72,6 +72,9 @@ _PER_LABEL = {
 }
 DROP_EMOTIONS = {'neutral'}       # fires on most sentences; excluded from the analysis
 
+THRESHOLDS = ({e: GOOGLE_FLAT_THR for e in _PER_LABEL} if THRESHOLD_MODE == 'google'
+              else dict(_PER_LABEL))
+
 EMO_POSITIVE = {'admiration', 'amusement', 'approval', 'caring', 'desire', 'excitement',
                 'gratitude', 'joy', 'love', 'optimism', 'pride', 'relief'}
 EMO_NEGATIVE = {'anger', 'annoyance', 'disappointment', 'disapproval', 'disgust',

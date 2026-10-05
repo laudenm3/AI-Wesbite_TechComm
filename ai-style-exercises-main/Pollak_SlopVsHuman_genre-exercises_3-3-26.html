@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing in a more human style — Genre Exercises</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: #1c1c2e; min-height: 100vh; }
+  .site-header { background: #1c1c2e; padding: 32px 40px 0; border-bottom: 1px solid #2e2e42; }
+  .site-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #f5f0e8; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .site-sub { font-size: 0.85rem; color: #b0aec8; margin-bottom: 24px; font-style: italic; }
+  .genre-tabs { display: flex; gap: 0; }
+  .genre-tab { padding: 12px 24px; border: none; background: none; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.88rem; font-weight: 400; color: #b0aec8; border-radius: 4px 4px 0 0; transition: all 0.15s; display: flex; align-items: center; gap: 7px; }
+  .genre-tab.active { background: #faf8f4; font-weight: 500; color: #1c1c2e; }
+  .body { background: #faf8f4; padding: 32px 40px 60px; max-width: 860px; margin: 0 auto; }
+
+  /* Genre header */
+  .genre-header { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid #e0dbd2; }
+  .genre-header-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .genre-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 700; color: #1c1c2e; }
+  .genre-meta { font-size: 0.83rem; color: #6b5030; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* Genre notes toggle */
+  .notes-toggle { display: flex; align-items: center; gap: 10px; background: none; border-radius: 3px; padding: 9px 18px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: all 0.15s; margin-bottom: 12px; }
+  .notes-toggle .arrow { display: inline-block; transition: transform 0.2s; font-size: 0.7rem; }
+  .notes-toggle.open .arrow { transform: rotate(90deg); }
+  .notes-panel { display: none; padding: 22px 24px; background: #fff; border: 1px solid #e0dbd2; margin-bottom: 28px; }
+  .notes-panel.open { display: block; }
+  .notes-heading { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; color: #1c1c2e; }
+  .notes-body { font-size: 0.91rem; line-height: 1.75; color: #3a3530; margin-bottom: 18px; }
+  .notes-bullets { display: flex; flex-direction: column; gap: 10px; }
+  .notes-bullet { display: flex; gap: 12px; font-size: 0.88rem; line-height: 1.6; }
+  .bullet-label { font-weight: 600; min-width: 120px; flex-shrink: 0; }
+  .bullet-text { color: #4a4540; }
+
+  /* Exercise cards */
+  .ex-card { background: #fff; border: 1px solid #e0dbd2; margin-bottom: 20px; overflow: hidden; }
+  .ex-card-head { padding: 18px 24px 14px; border-bottom: 1px solid #e8e2d8; }
+  .ex-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .ex-num { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #6b5030; }
+  .ex-tag { padding: 2px 10px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 2px; }
+  .ex-q { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: #1c1c2e; }
+  .ex-body { padding: 18px 24px 22px; }
+
+  /* Passage */
+  .passage { background: #f5f0e8; border-left: 3px solid #c4a882; padding: 14px 18px; font-size: 0.93rem; line-height: 1.8; color: #2a201a; margin-bottom: 14px; font-style: italic; }
+
+  /* Choose exercise */
+  .choose-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .choose-btn { text-align: left; padding: 14px 18px; border: 1.5px solid #c4a882; border-radius: 3px; background: #faf8f4; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.91rem; line-height: 1.7; color: #2a201a; transition: all 0.15s; }
+  .choose-btn:not([disabled]):hover { background: #ede8de; }
+  .choose-btn .opt-label { font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6b5030; }
+  .choose-btn.correct { background: #e8f4ee !important; border-color: #4a8c5c !important; color: #1a3a28 !important; }
+  .choose-btn.correct .opt-label { color: #2a6a40 !important; }
+  .choose-btn.wrong { background: #fce8e8 !important; border-color: #9c3a3a !important; color: #5a1a1a !important; }
+
+  /* Feedback box */
+  .feedback { padding: 14px 18px; background: #f5f0e8; font-size: 0.88rem; line-height: 1.7; color: #3a3028; display: none; }
+  .feedback.visible { display: block; }
+  .feedback-head { display: block; margin-bottom: 5px; font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; }
+
+  /* Hint box */
+  .hint-box { background: #fffbf2; border: 1px solid #e8d9b0; border-left: 3px solid #d4a840; padding: 10px 14px; font-size: 0.84rem; line-height: 1.65; color: #5a4020; margin-bottom: 14px; }
+
+  /* Textarea */
+  .write-area { width: 100%; min-height: 90px; padding: 12px 14px; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.93rem; line-height: 1.7; border: 1.5px solid #c4a882; border-radius: 3px; background: #fff; color: #1c1c2e; resize: vertical; outline: none; display: block; margin-bottom: 10px; }
+
+  /* Reveal / action buttons */
+  .action-btn { padding: 8px 18px; border-radius: 3px; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; }
+  .action-btn.outline { border: 1.5px solid; background: none; }
+  .action-btn.filled { border: 1.5px solid; }
+  .model-box { margin-top: 12px; padding: 14px 18px; background: #eaf4ee; border-left: 3px solid #4a8c5c; font-size: 0.91rem; line-height: 1.75; color: #1a3a28; font-style: italic; display: none; }
+  .model-box.visible { display: block; }
+  .model-label { font-style: normal; font-family: 'Cormorant Garamond', serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; color: #2a5a38; font-weight: 700; }
+
+  /* Highlight toggle */
+  .hl-toggle-btn { padding: 7px 14px; border: 1.5px solid #6b5030; border-radius: 3px; background: none; color: #6b5030; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; margin-bottom: 14px; }
+  .hl-toggle-btn.on, .hl-toggle-btn:hover { background: #6b5030; color: #fff; }
+  mark.sf-hl { background: #ffe08a; border-radius: 2px; padding: 0 2px; }
+
+  /* Rank exercise */
+  .rank-hint { font-size: 0.85rem; color: #3a3028; margin-bottom: 14px; }
+  .rank-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .rank-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border: 1.5px solid #c4a882; border-radius: 3px; background: #fff; transition: border-color 0.2s, background 0.2s; }
+  .rank-item.rank-correct { border-color: #4a8c5c; background: #eaf4ee; }
+  .rank-item.rank-wrong { border-color: #c47a5c; background: #fdf0e8; }
+  .rank-arrows { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
+  .rank-arrow { border: none; background: none; cursor: pointer; color: #6b5030; font-size: 0.75rem; padding: 2px 4px; }
+  .rank-arrow:disabled { color: #bbb; cursor: default; }
+  .rank-pos { font-weight: 600; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6b5030; display: block; margin-bottom: 4px; }
+  .rank-text { font-size: 0.91rem; line-height: 1.7; color: #2a201a; font-style: italic; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="site-title">Writing in a more human style</div>
+  <div class="site-sub">Genre-specific exercises for developing a verbal, hedged, clausal prose style</div>
+  <div style="font-size:0.82rem; color:#ddd0bb; line-height:1.65; margin-bottom:20px; max-width:780px;">
+    The style comparison framework used in these exercises is drawn from two research articles:
+    Markey, B., Brown, D. W., Laudenbach, M., &amp; Kohler, A. (2024). Dense and disconnected: Analyzing the sedimented style of ChatGPT-generated text at scale. <em>Written Communication, 41</em>(4), 571–600; and
+    Reinhart, A., Markey, B., Laudenbach, M., Pantusen, K., Yurko, R., Weinberg, G., &amp; Brown, D. W. (2025). Do LLMs write like humans? Variation in grammatical and rhetorical styles. <em>Proceedings of the National Academy of Sciences, 122</em>(8), e2422455122.
+    Together, these studies find that instruction-tuned LLMs produce a distinctive style: significantly more informationally dense than even professional human writing, with nominalizations and present participial clauses used at roughly twice to five times the human rate, and with the hedges, modals of possibility, and clausal co-ordination that keep human prose open and dialogic largely absent.
+    Because this style is increasingly present in writing produced with AI assistance (and it can easily be absorbed into a writer's own habits), these exercises focus on developing the ability to recognise it, revise it, and write against it across three genres where the contrast matters most.
+  </div>
+  <div class="genre-tabs" id="genre-tabs"></div>
+</div>
+
+<div class="body" id="body-content"></div>
+
+<script>
+const genres = [
+  {
+    id: "cover", label: "Cover Letters", icon: "✉",
+    color: "#4a6fa5",
+    note: {
+      heading: "AI slop style vs. a more human style in cover letters",
+      body: "Many applicants reach for AI slop style because it sounds \"professional\", but it often produces the opposite effect. When verbs are turned into nouns, the person behind the letter disappears: instead of someone who did things, the reader sees a list of abstract qualities. Markey et al. (2024) found that ChatGPT-generated text is significantly more informationally dense than even professional academic writing, producing prose that is dialogically closed: assertive, noun-heavy, and without the hedges and first-person engagement that make writing feel human. a more human style restores the writer as an active agent, uses verbs to describe concrete actions, and adds appropriate hedging when describing future fit. The goal is not to sound modest; it is to sound human and specific.",
+      bullets: [
+        { label: "AI slop style risk", text: "Nominalizations bury the \"I\": \"My demonstrated expertise in stakeholder engagement…\" reads like a CV, not a letter." },
+        { label: "a more human style approach", text: "Keep verbs active and personal: \"I have spent five years managing…\" is warmer and more direct." },
+        { label: "Hedging", text: "a more human style hedging is appropriate for claims about fit and the future: \"I believe I would contribute…\" signals self-awareness, not weakness." }
+      ]
+    },
+    exercises: [
+      {
+        type: "choose", tag: "Genre awareness",
+        question: "Which opening is written in AI slop style, and why does it create problems in a cover letter?",
+        options: [
+          { label: "Option 1", text: "My extensive background in the management of client relationships and the development of strategic communications frameworks, combined with a sustained commitment to the delivery of high-quality outputs, positions me as an ideal candidate for this role." },
+          { label: "Option 2", text: "I have spent five years managing client relationships and developing communications strategies, and throughout that time I have tried to deliver consistently high-quality work. I believe these experiences make me a strong candidate for this role." }
+        ],
+        answer: 0,
+        explanation: "Option 1 is AI slop style. The nominalizations ('management', 'development', 'delivery', 'commitment') turn actions into abstract nouns and push the writer out of the sentence, so there is no 'I' doing anything. Reinhart et al. (2025) found instruction-tuned LLMs use nominalizations at 1.5–2× the human rate, and Markey et al. (2024) found that this nominalization-heavy style produces text that feels informationally dense but dialogically closed: present but empty. Option 2 uses verbs ('managing', 'developing', 'deliver') and restores the writer as an active agent with a voice."
+      },
+      {
+        type: "transform", tag: "Transformation",
+        question: "Rewrite this cover letter sentence in a more human style. Restore the 'I', unpack the nominalizations into verbs, and add appropriate hedging where the claim is about the future.",
+        passage: "The completion of a master's degree in Environmental Policy and the undertaking of two internships with government agencies have provided a strong foundation for the pursuit of this role.",
+        tip: "Try turning 'completion', 'undertaking', and 'pursuit' back into verbs. Who completed? Who undertook? Add 'I feel that' or 'I believe' when making a claim about suitability.",
+        model: "I completed a master's degree in Environmental Policy and undertook two internships with government agencies, and I feel that these experiences have given me a strong foundation for this role."
+      },
+      {
+        type: "spotfix", tag: "Spot and fix",
+        question: "The paragraph below is written in AI slop style. Identify the features that make it feel impersonal, then rewrite it in a more human style.",
+        passage: "The demonstrated acquisition of skills in data analysis and the consistent delivery of high-quality outputs throughout my tenure at Meridian Associates have resulted in a deepened understanding of the operational requirements of fast-paced environments. The development of strong collaborative relationships with cross-functional teams has further contributed to my professional growth.",
+        features: ["acquisition of skills","delivery of high-quality outputs","tenure","resulted in a deepened understanding","development of strong collaborative relationships","contributed to my professional growth"],
+        tip: "Each nominalization hides a verb. 'Acquisition of skills' = 'I developed skills'. Try starting with 'During my time at…' and convert each noun phrase into a clause.",
+        model: "During my time at Meridian Associates, I developed skills in data analysis and consistently delivered high-quality work, which helped me to understand what fast-paced environments demand. I also built strong working relationships with colleagues across different teams, and I feel that this has shaped how I work and collaborate."
+      },
+      {
+        type: "choose", tag: "Hedging in context",
+        question: "Which sentence uses hedging more appropriately for a cover letter claim about future contribution?",
+        options: [
+          { label: "Option 1", text: "A strong alignment between my professional development trajectory and the innovation-focused culture of your organisation motivates my application and guarantees a meaningful contribution to your team." },
+          { label: "Option 2", text: "I am applying because I feel that the direction my career has taken so far aligns well with the innovative culture your organisation seems to foster, and I believe I could contribute meaningfully to your team." }
+        ],
+        answer: 1,
+        explanation: "Option 2 uses a more human style hedging appropriately: 'I feel that', 'seems to foster', 'I believe I could' all signal self-awareness about an uncertain future. Markey et al. (2024) found that LLM-generated text scores very low on the dimension associated with hedges and modals of possibility, producing prose that is closed to alternative perspectives, and this is the opposite of what a cover letter needs. Hedging is not weakness; it signals the kind of dialogic, self-aware voice that distinguishes human writing. Option 1's 'guarantees a meaningful contribution' is overconfident (no one can guarantee this), and 'professional development trajectory' is a nominalized, jargon-heavy noun phrase that sounds hollow."
+      }
+    ]
+  },
+  {
+    id: "instructions", label: "Instructional Documents", icon: "☰",
+    color: "#5c7a6b",
+    note: {
+      heading: "AI slop style vs. a more human style in instructional writing",
+      body: "Instruction writing has its own version of the AI slop style/human style contrast. AI slop style tends to produce passive, impersonal, noun-heavy instructions that obscure who does what and when. Reinhart et al. (2025) found that instruction-tuned LLMs use nominalizations at 1.5–2× the human rate; these patterns become serious usability problems in instructions. Interestingly, they also found that GPT-4o actually uses the agentless passive at roughly half the human rate, but pairs this with far more nominalization and participial modification, which creates a different kind of impersonality: actions are hidden inside noun phrases rather than passive constructions. a more human style, with its preference for active verbs and explicit agents, naturally produces clearer, more usable instructions. In this genre, a more human style's \"hedging\" is also important: good instructions acknowledge when steps may vary, when users need to make judgements, or when something might take longer than expected.",
+      bullets: [
+        { label: "Clarity", text: "AI slop style turns actions into things: 'completion of the registration process requires the submission of…'; a more human style names the agent: 'To register, you will need to submit…'" },
+        { label: "Ambiguity risk", text: "Agentless passives hide who does what: 'The form should be signed' (signed by whom?) a more human style says: 'You should sign the form before…'" },
+        { label: "Hedging", text: "a more human style hedging is practical in instructions: 'This typically takes around ten minutes, though it may take longer depending on your connection.'" }
+      ]
+    },
+    exercises: [
+      {
+        type: "choose", tag: "Clarity comparison",
+        question: "Which instruction is easier to follow, and what specific AI slop style features make the other one harder?",
+        options: [
+          { label: "Option 1", text: "Prior to the commencement of the installation procedure, verification of system compatibility requirements and the downloading of the most recent version of the software should be undertaken by the user." },
+          { label: "Option 2", text: "Before you start the installation, check that your system meets the requirements and download the most recent version of the software." }
+        ],
+        answer: 1,
+        explanation: "Option 2 is far clearer. Option 1 uses three nominalizations ('commencement', 'verification', 'downloading') which turn actions into abstract things. The passive 'should be undertaken by the user' is also roundabout; Option 2 simply says 'check' and 'download', using imperative verbs directed at 'you'. Reinhart et al. (2025) found instruction-tuned LLMs use present participial clauses at 2–5× the human rate and nominalizations at 1.5–2× the rate, and these are especially disorienting in instructions, where clarity of action is paramount. Markey et al. (2024) further found that this nominalization-heavy style produces text that feels dense but imprecise, full of abstract noun phrases that don't concretize what anyone should actually do."
+      },
+      {
+        type: "transform", tag: "Transformation",
+        question: "Rewrite this AI slop style instruction paragraph in a more human style. Use 'you', active verbs, and imperative mood where appropriate. Add a hedged note about timing.",
+        passage: "The successful completion of the application requires the provision of three professional references, the submission of a personal statement not exceeding 500 words, and the payment of the non-refundable processing fee prior to the deadline.",
+        tip: "Start with 'To complete your application…' and list the actions as imperatives or 'you will need to' constructions. Add something like 'Please note that…' for the deadline, and a hedged note about processing time.",
+        model: "To complete your application, you will need to provide three professional references, submit a personal statement of no more than 500 words, and pay the non-refundable processing fee before the deadline. Please note that processing may take up to five working days, so we recommend submitting as early as possible."
+      },
+      {
+        type: "spotfix", tag: "Spot the ambiguity",
+        question: "This AI slop style manual excerpt has several points of ambiguity; it is often unclear who acts, when, or under what conditions. Identify at least three problems, then rewrite in a more human style.",
+        passage: "Following the completion of initial setup, configuration adjustments may be required. Adjustment of display settings and the modification of notification preferences can be accessed through the Settings menu. In the event of error occurrence, the execution of a system restart is recommended prior to the undertaking of further troubleshooting steps.",
+        features: ["completion of initial setup","configuration adjustments may be required","can be accessed","error occurrence","execution of a system restart is recommended","undertaking of further troubleshooting steps"],
+        tip: "For each nominalization, ask: who does this? When? Under what conditions? Try 'Once you have completed…', 'you may need to…', 'If you see an error…'",
+        model: "Once you have completed the initial setup, you may need to adjust some settings. You can change your display settings and notification preferences in the Settings menu. If an error appears, we recommend restarting the system before you try any further troubleshooting steps."
+      },
+      {
+        type: "transform", tag: "Adding appropriate hedges",
+        question: "These instructions are written with appropriate a more human style verbs and agents, but they make claims that are too absolute. Add hedging to acknowledge variation and help users set realistic expectations.",
+        passage: "Step 3: The verification email arrives in your inbox within two minutes. If you do not see it, check your spam folder. The link in the email expires after 24 hours. Clicking the link activates your account immediately.",
+        tip: "Think about what might vary: email delivery speed, spam filters, activation time. Use hedges like 'typically', 'should', 'usually', 'may', 'in most cases'.",
+        model: "Step 3: The verification email should typically arrive in your inbox within two minutes, though in some cases it may take a little longer. If you do not see it, it is worth checking your spam folder. Please note that the link in the email will expire after 24 hours. Once you click the link, your account should be activated, though it may occasionally take a few minutes to update."
+      }
+    ]
+  },
+  {
+    id: "proposals", label: "Proposals", icon: "◈",
+    color: "#8b5e3c",
+    note: {
+      heading: "AI slop style vs. a more human style in proposals",
+      body: "Proposals are where the AI slop style/human style tension is most educationally interesting. Writers often reach for AI slop style because it sounds authoritative, but proposals make claims about uncertain futures, so appropriate hedging is not weakness. It is intellectual honesty, and it is often more persuasive. Markey et al. (2024) found that LLM-generated text scores very low on the dimension that captures hedges and modals of possibility, which produces writing that is dialogically closed and doesn't acknowledge alternative perspectives. Reinhart et al. (2025) further found that instruction tuning pushes models toward an informationally dense, noun-heavy style even when prompted to write differently, suggesting the overconfidence of AI slop style is a systematic feature of LLM writing, not just a prompt problem. An overconfident AI slop style proposal can seem naïve or unaware of complexity. A well-hedged a more human style proposal shows that the writer has thought carefully about what might happen and under what conditions. The key is calibrated hedging: not so much that the argument collapses, but enough to be credible.",
+      bullets: [
+        { label: "The AI slop style trap", text: "'Implementation of this scheme will result in a 30% reduction in costs.' No proposal can guarantee this. The overconfidence invites scepticism." },
+        { label: "a more human style hedging", text: "'Evidence suggests this scheme could reduce costs by around 30%, though this would depend on…' This version acknowledges uncertainty while still making a case." },
+        { label: "Calibration", text: "Too much hedging weakens proposals just as much as too little. a more human style aims for precision about uncertainty, not endless qualification." }
+      ]
+    },
+    exercises: [
+      {
+        type: "choose", tag: "Identifying overconfidence",
+        question: "Which proposal sentence is problematically overconfident (AI slop style), and which demonstrates appropriately calibrated hedging (a more human style)?",
+        options: [
+          { label: "Option 1", text: "The introduction of a four-day working week will result in increased staff retention, the elimination of absenteeism, and measurable improvements in productivity across all departments." },
+          { label: "Option 2", text: "Evidence from pilot programmes in comparable organisations suggests that introducing a four-day working week might lead to improved staff retention and reduced absenteeism, though the effects on productivity would likely vary across departments." }
+        ],
+        answer: 1,
+        explanation: "Option 1 is AI slop style overconfidence: 'will result in', 'elimination of', and 'across all departments' make claims no proposal can guarantee. 'Elimination of absenteeism' is particularly problematic; implausible claims undermine credibility. Option 2 grounds the claim in evidence ('pilot programmes'), uses appropriate hedges ('suggests', 'might lead to', 'would likely vary'), and honestly acknowledges variation across departments. Markey et al. (2024) found that LLM-generated text scores low on the dimension associated with hedges and modals of possibility, producing writing closed to alternative perspectives, and this is exactly the overconfidence problem in Option 1."
+      },
+      {
+        type: "transform", tag: "Adding calibrated hedges",
+        question: "This proposal sentence makes every claim with complete certainty. Add hedging to make it credible, but do not hedge so much that the argument collapses.",
+        passage: "The redesign of the library study spaces will attract more students to campus, improve academic performance across all year groups, and increase satisfaction scores in the annual student survey.",
+        tip: "Try grounding each claim in evidence or reasoning ('based on feedback…', 'research suggests…'). Use 'could', 'might', 'seems likely to'. Acknowledge that effects may vary. But keep the overall argument positive and clear.",
+        model: "Redesigning the library study spaces could attract more students to campus and might contribute to improved academic performance, particularly for students who currently find the existing spaces difficult to work in. Based on feedback collected during our consultation, we would also expect satisfaction scores in the annual student survey to improve, though the size of any effect would depend on how extensively the spaces are used."
+      },
+      {
+        type: "spotfix", tag: "Spot and fix",
+        question: "This proposal paragraph uses heavy AI slop style nominalization and no hedging. Identify the nominalization chains, then rewrite in a more human style with appropriate hedges and verbal style.",
+        passage: "The implementation of a peer mentoring programme represents a strategic response to the identification of high attrition rates among first-year students and would result in the provision of structured social support mechanisms facilitating the development of community belonging and the reduction of social isolation.",
+        features: ["implementation","identification of high attrition rates","provision of structured social support mechanisms","development of community belonging","reduction of social isolation"],
+        tip: "Start with 'We are proposing to…' and unpack each nominalization: 'implementation' = 'implement', 'provision of support' = 'provide support'. Add hedges when describing expected outcomes.",
+        model: "We are proposing to implement a peer mentoring programme in response to the high attrition rates we have identified among first-year students. We believe this programme could provide structured social support and might help students to develop a stronger sense of belonging within the university community, which could in turn reduce the social isolation that seems to contribute to early withdrawal."
+      },
+      {
+        type: "rank", tag: "Calibration exercise",
+        question: "Rank these three versions of the same proposal claim from weakest to strongest. Consider: which is overconfident (AI slop style), which is appropriately hedged (a more human style; good), and which is over-hedged (excessively)?",
+        options: [
+          { label: "Version A", text: "This intervention will dramatically improve student wellbeing across all year groups and will transform the student experience within one academic year." },
+          { label: "Version B", text: "This intervention seems likely to improve student wellbeing, particularly for students in their first year, though the extent of the effect may vary depending on uptake and individual circumstances." },
+          { label: "Version C", text: "It is perhaps possible that, under certain circumstances, some students might conceivably experience what could tentatively be described as a modest improvement in some aspects of their wellbeing, though this cannot be confirmed at this stage." }
+        ],
+        ranking: ["Version C","Version A","Version B"],
+        rankLabels: ["Weakest (over-hedged)","Problematic (overconfident)","Strongest (calibrated)"],
+        explanation: "Version C (weakest) is over-hedged to the point of paralysis: stacking 'perhaps', 'possible', 'might conceivably', 'tentatively', 'could be described as' signals that the writer has no confidence in their own proposal. Version A (problematic) commits the opposite error: 'will dramatically improve' and 'will transform' are overconfident claims that invite scepticism; as Markey et al. (2024) found, this kind of dialogically closed assertiveness, without hedges or modals of possibility, is a defining characteristic of LLM-generated text. Version B (strongest) is calibrated: 'seems likely', 'particularly for', 'may vary depending on' acknowledge uncertainty honestly while still making a positive, coherent case."
+      }
+    ]
+  }
+];
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function applyHL(text, terms) {
+  const sorted = [...terms].sort((a,b) => text.indexOf(a) - text.indexOf(b));
+  let out = '', cur = 0;
+  for (const t of sorted) {
+    const i = text.indexOf(t, cur);
+    if (i < 0) continue;
+    out += esc(text.slice(cur, i)) + `<mark class="sf-hl">${esc(t)}</mark>`;
+    cur = i + t.length;
+  }
+  return out + esc(text.slice(cur));
+}
+
+// ── Render genre tab ───────────────────────────────────────────────────────
+
+let activeGenre = genres[0].id;
+
+function renderAll() {
+  // Tabs
+  const tabsEl = document.getElementById('genre-tabs');
+  tabsEl.innerHTML = genres.map(g => `
+    <button class="genre-tab${g.id === activeGenre ? ' active' : ''}"
+      style="${g.id === activeGenre ? `color:${g.color}` : ''}"
+      onclick="setGenre('${g.id}')">
+      <span>${g.icon}</span>${g.label}
+    </button>`).join('');
+
+  // Body
+  const g = genres.find(x => x.id === activeGenre);
+  document.getElementById('body-content').innerHTML = buildGenreHTML(g);
+}
+
+function setGenre(id) {
+  activeGenre = id;
+  renderAll();
+}
+
+function buildGenreHTML(g) {
+  let html = `
+    <div class="genre-header">
+      <div class="genre-header-row">
+        <span style="font-size:1.4rem">${g.icon}</span>
+        <h2 class="genre-title">${esc(g.label)}</h2>
+      </div>
+      <div class="genre-meta">${g.exercises.length} exercises · identification, transformation, and spot-and-fix</div>
+    </div>
+    <button class="notes-toggle" id="notes-toggle" style="border:1.5px solid ${g.color};color:${g.color}" onclick="toggleNotes()">
+      <span class="arrow">▶</span> Show genre notes
+    </button>
+    <div class="notes-panel" id="notes-panel" style="border-left:4px solid ${g.color}">
+      <div class="notes-heading">${esc(g.note.heading)}</div>
+      <div class="notes-body">${esc(g.note.body)}</div>
+      <div class="notes-bullets">${g.note.bullets.map(b => `
+        <div class="notes-bullet">
+          <span class="bullet-label" style="color:${g.color}">${esc(b.label)}</span>
+          <span class="bullet-text">${esc(b.text)}</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+
+  g.exercises.forEach((ex, i) => {
+    html += buildExercise(ex, i, g.color);
+  });
+  return html;
+}
+
+function buildExercise(ex, i, color) {
+  const tagBg = color + '20';
+  let inner = '';
+
+  if (ex.type === 'choose') {
+    inner = `<div class="choose-options">${ex.options.map((opt, oi) => `
+      <button class="choose-btn" id="cho-${i}-${oi}" onclick="chooseAnswer(${i},${oi})">
+        <span class="opt-label">${esc(opt.label)}</span>${esc(opt.text)}
+      </button>`).join('')}</div>
+      <div class="feedback" id="fb-${i}" style="border-left:3px solid ${color}">
+        <span class="feedback-head" id="fb-head-${i}"></span>
+        <span id="fb-body-${i}"></span>
+      </div>`;
+  } else if (ex.type === 'transform') {
+    inner = `<div class="passage">${esc(ex.passage)}</div>
+      <div class="hint-box">💡 <strong>Hint:</strong> ${esc(ex.tip)}</div>
+      <textarea class="write-area" placeholder="Write your more human version here…"
+        onfocus="this.style.borderColor='${color}'" onblur="this.style.borderColor='#c4a882'"></textarea>
+      <button class="action-btn outline" id="rev-${i}" style="border-color:${color};color:${color}"
+        onclick="toggleModel(${i}, '${color}')">Show model answer</button>
+      <div class="model-box" id="mod-${i}">
+        <span class="model-label">Model answer</span>${esc(ex.model)}
+      </div>`;
+  } else if (ex.type === 'spotfix') {
+    inner = `<div class="passage" id="sf-passage-${i}">${esc(ex.passage)}</div>
+      <button class="hl-toggle-btn" id="sf-hl-${i}" onclick="toggleSFHL(${i})">Highlight AI slop style features</button>
+      <div class="hint-box">💡 <strong>Hint:</strong> ${esc(ex.tip)}</div>
+      <textarea class="write-area" placeholder="Write your more human version here…"
+        onfocus="this.style.borderColor='${color}'" onblur="this.style.borderColor='#c4a882'"></textarea>
+      <button class="action-btn outline" id="rev-${i}" style="border-color:${color};color:${color}"
+        onclick="toggleModel(${i}, '${color}')">Show model answer</button>
+      <div class="model-box" id="mod-${i}">
+        <span class="model-label">Model answer</span>${esc(ex.model)}
+      </div>`;
+  } else if (ex.type === 'rank') {
+    inner = `<div class="rank-hint">Use the arrows to order from <strong>weakest</strong> to <strong>strongest</strong>.</div>
+      <div class="rank-list" id="rank-list-${i}"></div>
+      <button class="action-btn filled" id="rank-check-${i}"
+        style="background:${color};border-color:${color};color:#fff"
+        onclick="checkRank(${i})">Check my ranking</button>
+      <div class="feedback" id="fb-${i}" style="border-left:3px solid ${color};margin-top:12px">
+        <span class="feedback-head" id="fb-head-${i}"></span>
+        <span id="fb-body-${i}"></span>
+      </div>`;
+  }
+
+  return `<div class="ex-card">
+    <div class="ex-card-head">
+      <div class="ex-meta">
+        <span class="ex-num">Exercise ${i+1}</span>
+        <span class="ex-tag" style="background:${tagBg};color:${color}">${esc(ex.tag)}</span>
+      </div>
+      <div class="ex-q">${esc(ex.question)}</div>
+    </div>
+    <div class="ex-body">${inner}</div>
+  </div>`;
+}
+
+// ── Interaction handlers ───────────────────────────────────────────────────
+
+function toggleNotes() {
+  const panel = document.getElementById('notes-panel');
+  const btn = document.getElementById('notes-toggle');
+  const open = panel.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.querySelector('.arrow').style.transform = open ? 'rotate(90deg)' : 'none';
+  btn.innerHTML = btn.innerHTML.replace(/Show|Hide/, open ? 'Hide' : 'Show');
+}
+
+function chooseAnswer(exIdx, chosenOpt) {
+  const g = genres.find(x => x.id === activeGenre);
+  const ex = g.exercises[exIdx];
+  ex.options.forEach((_, oi) => {
+    const btn = document.getElementById(`cho-${exIdx}-${oi}`);
+    btn.disabled = true;
+    if (oi === chosenOpt) btn.classList.add(oi === ex.answer ? 'correct' : 'wrong');
+    if (oi !== chosenOpt && oi === ex.answer) btn.classList.add('correct');
+  });
+  const correct = chosenOpt === ex.answer;
+  document.getElementById(`fb-head-${exIdx}`).textContent = correct
+    ? '\u2713 Correct!'
+    : `\u2717 Not quite \u2014 the better version is ${ex.options[ex.answer].label}.`;
+  document.getElementById(`fb-body-${exIdx}`).textContent = ex.explanation;
+  document.getElementById(`fb-${exIdx}`).classList.add('visible');
+}
+
+function toggleModel(i, color) {
+  const m = document.getElementById(`mod-${i}`);
+  const b = document.getElementById(`rev-${i}`);
+  const on = m.classList.toggle('visible');
+  b.textContent = on ? 'Hide model answer' : 'Show model answer';
+  if (on) { b.style.background = color; b.style.color = '#fff'; }
+  else { b.style.background = 'none'; b.style.color = color; }
+}
+
+// Spot-and-fix highlight state per exercise index
+const sfHLState = {};
+function toggleSFHL(i) {
+  const g = genres.find(x => x.id === activeGenre);
+  const ex = g.exercises[i];
+  sfHLState[i] = !sfHLState[i];
+  const passageEl = document.getElementById(`sf-passage-${i}`);
+  const btn = document.getElementById(`sf-hl-${i}`);
+  passageEl.innerHTML = sfHLState[i] ? applyHL(ex.passage, ex.features) : esc(ex.passage);
+  btn.textContent = sfHLState[i] ? 'Hide highlights' : 'Highlight AI slop style features';
+  btn.classList.toggle('on', sfHLState[i]);
+}
+
+// Rank exercise state
+const rankState = {};
+function initRankState(exIdx) {
+  if (!rankState[exIdx]) rankState[exIdx] = { order: [0,1,2], submitted: false };
+}
+function renderRankList(exIdx) {
+  const g = genres.find(x => x.id === activeGenre);
+  const ex = g.exercises[exIdx];
+  initRankState(exIdx);
+  const { order, submitted } = rankState[exIdx];
+  const listEl = document.getElementById(`rank-list-${exIdx}`);
+  if (!listEl) return;
+  listEl.innerHTML = order.map((oi, pos) => {
+    const opt = ex.options[oi];
+    const isCorrect = submitted && ex.ranking[pos] === opt.label;
+    const cls = submitted ? (isCorrect ? 'rank-item rank-correct' : 'rank-item rank-wrong') : 'rank-item';
+    const posLabel = submitted ? `#${pos+1}: ${ex.rankLabels[pos]}` : `#${pos+1}`;
+    return `<div class="${cls}">
+      <div class="rank-arrows">
+        <button class="rank-arrow" ${pos===0||submitted?'disabled':''} onclick="moveRank(${exIdx},${pos},-1)">▲</button>
+        <button class="rank-arrow" ${pos===order.length-1||submitted?'disabled':''} onclick="moveRank(${exIdx},${pos},1)">▼</button>
+      </div>
+      <div>
+        <span class="rank-pos">${esc(posLabel)}</span>
+        <span class="rank-text">${esc(opt.text)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function moveRank(exIdx, pos, dir) {
+  initRankState(exIdx);
+  const s = rankState[exIdx];
+  if (s.submitted) return;
+  const target = pos + dir;
+  if (target < 0 || target >= s.order.length) return;
+  [s.order[pos], s.order[target]] = [s.order[target], s.order[pos]];
+  renderRankList(exIdx);
+}
+function checkRank(exIdx) {
+  const g = genres.find(x => x.id === activeGenre);
+  const ex = g.exercises[exIdx];
+  initRankState(exIdx);
+  rankState[exIdx].submitted = true;
+  renderRankList(exIdx);
+  const btn = document.getElementById(`rank-check-${exIdx}`);
+  if (btn) btn.style.display = 'none';
+  const correct = JSON.stringify(rankState[exIdx].order.map(i => ex.options[i].label)) === JSON.stringify(ex.ranking);
+  document.getElementById(`fb-head-${exIdx}`).textContent = correct
+    ? '\u2713 Perfect ranking!'
+    : 'Here is the intended ranking; see the explanation below.';
+  document.getElementById(`fb-body-${exIdx}`).textContent = ex.explanation;
+  document.getElementById(`fb-${exIdx}`).classList.add('visible');
+}
+
+// After render, init rank lists
+function postRender() {
+  const g = genres.find(x => x.id === activeGenre);
+  g.exercises.forEach((ex, i) => {
+    if (ex.type === 'rank') renderRankList(i);
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+renderAll();
+postRender();
+
+// Override setGenre to also run postRender
+const _setGenre = setGenre;
+window.setGenre = function(id) {
+  activeGenre = id;
+  renderAll();
+  postRender();
+};
+</script>
+</body>
+</html>

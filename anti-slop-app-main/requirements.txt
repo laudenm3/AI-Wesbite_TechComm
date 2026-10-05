@@ -1,0 +1,14 @@
+# Pinned on purpose. Streamlit Cloud installs whatever this file allows every time it
+# rebuilds the app, so an open-ended version would let a new Streamlit arrive without
+# warning. The accessibility patch in utils/a11y.py depends on Streamlit's own markup,
+# so a new version should be tried deliberately. See "Keeping the app healthy" in the
+# README before raising this number.
+streamlit==1.64.0
+python-docx==1.1.2
+
+# Biber Tagger page. The spaCy model is installed from its release file, so its version is
+# pinned with the matching spaCy range (en_core_web_sm 3.8.0 needs spaCy 3.8.x).
+pybiber==0.3.1
+spacy>=3.8,<3.9
+polars
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl

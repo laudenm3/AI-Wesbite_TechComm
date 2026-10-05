@@ -1,0 +1,27 @@
+# Streamlit's own theme, in both modes. Defining a dark section as well as a light one
+# keeps the light / dark / system switcher in the app's menu: with only a light theme
+# defined, Streamlit removes that switcher. utils/style.py carries the matching palettes
+# for the app's own surfaces.
+[theme]
+base = "light"
+primaryColor = "#553a9e"
+backgroundColor = "#f5f5f7"
+secondaryBackgroundColor = "#ececed"
+textColor = "#14151a"
+borderColor = "#787e8c"
+font = "Literata:https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&display=swap"
+headingFont = "IBM Plex Sans:https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+
+[theme.dark]
+base = "dark"
+primaryColor = "#bcaaf5"
+backgroundColor = "#15161c"
+secondaryBackgroundColor = "#1a1c23"
+textColor = "#edeef2"
+borderColor = "#767c88"
+
+[theme.sidebar]
+backgroundColor = "#ececed"
+
+[client]
+toolbarMode = "auto"   # students need this menu to reach the theme switcher

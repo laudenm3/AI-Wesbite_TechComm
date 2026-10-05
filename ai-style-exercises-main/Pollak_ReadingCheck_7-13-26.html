@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading Check — How LLMs Actually Write</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: #1c1c2e; min-height: 100vh; }
+  .site-header { background: #1c1c2e; padding: 32px 40px 28px; border-bottom: 1px solid #2e2e42; }
+  .back-link { display: inline-block; font-size: 0.8rem; color: #b0aec8; text-decoration: none; margin-bottom: 16px; letter-spacing: 0.04em; }
+  .back-link:hover { color: #f5f0e8; }
+  .site-kicker { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #c4a882; margin-bottom: 8px; }
+  .site-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #f5f0e8; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .site-sub { font-size: 0.85rem; color: #b0aec8; font-style: italic; max-width: 720px; line-height: 1.6; }
+  .body { background: #faf8f4; padding: 36px 40px 60px; }
+  .inner { max-width: 860px; margin: 0 auto; }
+
+  .intro { background: #fff; border: 1px solid #e0dbd2; padding: 22px 26px; margin-bottom: 30px; font-size: 0.92rem; line-height: 1.75; color: #3a3530; }
+  .intro p { margin-bottom: 12px; }
+  .intro p:last-child { margin-bottom: 0; }
+  .intro .cite { font-size: 0.83rem; color: #6b6258; font-style: italic; }
+
+  .section-head { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700; color: #1c1c2e; margin: 34px 0 6px; }
+  .section-note { font-size: 0.86rem; color: #5a5248; margin-bottom: 18px; line-height: 1.65; }
+
+  .q-card { background: #fff; border: 1px solid #e0dbd2; margin-bottom: 18px; }
+  .q-head { padding: 16px 22px 12px; border-bottom: 1px solid #e8e2d8; }
+  .q-num { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #6b5030; margin-bottom: 6px; }
+  .q-text { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.08rem; font-weight: 600; line-height: 1.5; color: #1c1c2e; }
+  .q-body { padding: 14px 22px 18px; }
+  .opt { display: block; width: 100%; text-align: left; padding: 11px 15px; border: 1.5px solid #c4a882; border-radius: 3px; background: #faf8f4; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.9rem; line-height: 1.6; color: #2a201a; transition: all 0.15s; margin-bottom: 9px; }
+  .opt:not([disabled]):hover { background: #ede8de; }
+  .opt.correct { background: #e8f4ee !important; border-color: #4a8c5c !important; color: #1a3a28 !important; }
+  .opt.wrong { background: #fce8e8 !important; border-color: #9c3a3a !important; color: #5a1a1a !important; }
+  .feedback { padding: 12px 15px; background: #f5f0e8; font-size: 0.86rem; line-height: 1.7; color: #3a3028; display: none; border-left: 3px solid #c4a882; margin-top: 4px; }
+  .feedback.visible { display: block; }
+
+  .score-bar { position: sticky; bottom: 0; background: #1c1c2e; color: #f5f0e8; padding: 12px 22px; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center; border-radius: 4px 4px 0 0; margin-top: 26px; }
+  .score-bar .val { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700; color: #c4a882; }
+
+  .disc-card { background: #fffbf2; border: 1px solid #e8d9b0; border-left: 3px solid #d4a840; padding: 16px 20px; margin-bottom: 14px; font-size: 0.92rem; line-height: 1.7; color: #4a3a20; }
+  .disc-card .lbl { font-weight: 600; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 5px; color: #8a6420; }
+
+  .footer-note { margin-top: 40px; padding-top: 18px; border-top: 1px solid #e0dbd2; font-size: 0.8rem; color: #8a8278; line-height: 1.65; }
+  @media (max-width: 620px) { .site-header { padding: 24px 20px 22px; } .body { padding: 26px 18px 50px; } }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <a class="back-link" href="index.html">← All resources</a>
+  <div class="site-kicker">Course Unit · Readings</div>
+  <div class="site-title">Reading Check: How LLMs Actually Write</div>
+  <div class="site-sub">A comprehension check on Markey et al. (2024) and Reinhart et al. (2025), plus discussion prompts for class. Complete this after finishing both readings and before we start the cover letter unit.</div>
+</div>
+
+<div class="body"><div class="inner">
+
+  <div class="intro">
+    <p>The two assigned readings are the basis for everything we do with AI-generated text in this course. They compare large datasets of human writing and LLM-generated writing, and they identify specific, countable language features that differ between the two. This quiz checks whether you've picked up the key findings. It's self-graded and you can retry it, but you should do it honestly, because the activities in Units 1–3 all assume that you know these features.</p>
+    <p class="cite">Markey, B., Brown, D. W., Laudenbach, M., &amp; Kohler, A. (2024). <a href="https://journals.sagepub.com/doi/abs/10.1177/07410883241263528">Dense and disconnected: Analyzing the sedimented style of ChatGPT-generated text at scale</a>. <em>Written Communication, 41</em>(4), 571–600.<br>
+    Reinhart, A., Markey, B., Laudenbach, M., Pantusen, K., Yurko, R., Weinberg, G., &amp; Brown, D. W. (2025). <a href="https://www.pnas.org/doi/abs/10.1073/pnas.2422455122">Do LLMs write like humans? Variation in grammatical and rhetorical styles</a>. <em>PNAS, 122</em>(8), e2422455122.</p>
+  </div>
+
+  <div class="section-head">Part A · Comprehension questions</div>
+  <div class="section-note">Choose one answer per question. You'll get immediate feedback with a pointer back to the relevant part of the reading.</div>
+
+  <div id="quiz"></div>
+
+  <div class="score-bar"><span>Your score</span><span class="val" id="score">0 / 10</span></div>
+
+  <div class="section-head">Part B · Discussion prompts</div>
+  <div class="section-note">We'll take these up in class. Jot notes for at least two of them.</div>
+
+  <div class="disc-card"><span class="lbl">Prompt 1</span>Markey et al. describe ChatGPT's prose as "empty" and "fluffy" even though it is informationally <em>dense</em>. How can text be dense and empty at the same time? Try to explain this using one of the specific features from the readings.</div>
+  <div class="disc-card"><span class="lbl">Prompt 2</span>Reinhart et al. found that <em>base</em> models produce writing with style category rates much closer to human norms, and that instruction tuning appears to introduce the distinctive "AI slop" style rather than correct it. Why might the process of making models more "helpful" also make their writing less human?</div>
+  <div class="disc-card"><span class="lbl">Prompt 3</span>Both studies note that some of these features (nominalizations, density) also appear in professional academic writing. So where is the line between "professional style" and "AI slop"? Is it about the features themselves, or how they're used?</div>
+  <div class="disc-card"><span class="lbl">Prompt 4</span>Hedges and modals of possibility ("might," "could," "seems to") are often treated as weak writing. These two readings suggest the opposite: they keep prose dialogically open (and show intellectual humility). When have you been told to cut hedging from your writing, and do you now agree or disagree with that advice?</div>
+  <div class="disc-card"><span class="lbl">Prompt 5</span>If audiences (employers, professors, community decisionmakers) are becoming more attuned to these markers of synthetic text, what are the practical risks of submitting writing that carries them, even if you wrote it yourself?</div>
+
+  <div class="footer-note">Part of <a href="index.html" style="color:#6b5030;">Writing Against AI Slop</a> · Calvin Pollak · University of Washington. Quiz content paraphrases findings from the two cited studies for educational purposes.</div>
+
+</div></div>
+
+<script>
+const QS = [
+  {q:"Markey et al.'s central finding is that ChatGPT-generated academic prose is:",
+   opts:["More informationally dense than even professional academic writing","About as dense as first-year student writing","Less dense than human writing, but more error-prone","Indistinguishable from professional writing on density measures"],
+   a:0, fb:"Correct answer: (a). On the involved-vs-informational dimension, ChatGPT scored further from professional writing than professional writing scored from upper-level student writing. Density is the headline finding, and the rest of the style follows from it."},
+  {q:"Markey et al. call generated text 'dialogically closed.' In terms of specific features, this mostly means the text has:",
+   opts:["Too many rhetorical questions","Very few hedges and modals of possibility","No citations of other authors","Short, choppy sentences"],
+   a:1, fb:"Correct answer: (b). Hedges and modals ('might,' 'could,' 'seems to') are how writers signal they've considered alternatives. Generated text scores very low on them, so its claims read as closed to other perspectives."},
+  {q:"The researchers informally called ChatGPT's tendency to slot related vocabulary into rigid syntactic templates:",
+   opts:["Boilerplating","Mad libbing","Stencil drift","Template lock"],
+   a:1, fb:"Correct answer: (b). When prompted to produce many texts, ChatGPT produced the lowest variance of any subcorpus; the same frames recurred with different words dropped in, like a Mad Libs game."},
+  {q:"Markey et al. also found that ChatGPT struggles to generate:",
+   opts:["Grammatically correct sentences","Pedestrian, concrete examples that ground abstract concepts","Long paragraphs","Transitions between sections"],
+   a:1, fb:"Correct answer: (b). Abstract noun phrases pile up but are rarely grounded in ordinary, concrete examples. This is why the prose can feel 'fluffy' despite its density, and it's a gap that human readers notice and may respond negatively to."},
+  {q:"According to Reinhart et al., the single most distinctive grammatical marker of instruction-tuned LLM output is:",
+   opts:["Semicolon overuse","The agentless passive voice","Present participial clauses (e.g., 'a program facilitating the development of…')","Sentence fragments"],
+   a:2, fb:"Correct answer: (c). Instruction-tuned models use present participial clauses at 2 to 5 times the human rate; GPT-4o used them at 5.3 times the human rate."},
+  {q:"Reinhart et al. found that instruction-tuned models use nominalizations (verbs turned into nouns, like 'implementation') at roughly:",
+   opts:["The same rate as humans","Half the human rate","1.5 to 2 times the human rate","10 times the human rate"],
+   a:2, fb:"Correct answer: (c). Nominalizations run about 1.5–2× the human rate (GPT-4o about 2.1×). Combined with dense noun phrases, this produces the noun-heavy style described in both articles."},
+  {q:"Which finding about the agentless passive voice ('the samples were measured') is correct?",
+   opts:["GPT-4o uses it at about half the human rate","All models use it far more than humans","Only base models avoid it","The studies didn't measure passive voice"],
+   a:0, fb:"Correct answer: (a). This finding may surprise some readers (who associate the passive voice with abstraction). GPT-4o underuses the agentless passive, but it achieves a different kind of impersonality by turning actions into nouns through nominalizations ('the completion of the form')."},
+  {q:"On clausal co-ordination (linking full clauses with words like 'and' or 'but'), Reinhart et al. found:",
+   opts:["All models avoid it equally","Both GPT-4o models avoid it, while all Llama 3 variants use it more than humans","Only humans use clausal co-ordination","Llama 3 avoids it and GPT-4o overuses it"],
+   a:1, fb:"Correct answer: (b). The pattern is model-specific: the GPT-4o models link nouns to nouns (phrasal co-ordination at ~1.9× the human rate) rather than clauses to clauses, while Llama 3 variants co-ordinate clauses more than humans do."},
+  {q:"Reinhart et al. compared base models with instruction-tuned models and concluded that the distinctive 'AI style':",
+   opts:["Comes from the pretraining data and can't be changed","Appears to be introduced by instruction tuning, since base model-produced text has style features closer to human norms","Only appears in text produced by models below a certain size","Disappears when models are given longer prompts"],
+   a:1, fb:"Correct answer: (b). Base models generated text with style features at rates much closer to human norms. The style seems to be a byproduct of tuning models to be helpful assistants, not an inevitable property of language models."},
+  {q:"Which vocabulary finding did Reinhart et al. report?",
+   opts:["LLMs avoid adjectives almost entirely","Words like 'tapestry,' 'palpable,' 'intricate,' and 'underscore' appeared at 100 times or more the human rate in text produced by GPT-4o","LLM-generated writing uses more slang than human writing","LLM vocabulary varies dramatically by genre, unlike human vocabulary"],
+   a:1, fb:"Correct answer: (b). A handful of LLM-favorite words recur at extreme rates, and LLMs also fail to vary their style by genre the way humans do, producing text misaligned with its context."}
+];
+
+const quiz = document.getElementById('quiz');
+let score = 0, answered = new Set();
+QS.forEach((item, i) => {
+  const card = document.createElement('div'); card.className = 'q-card';
+  const letters = ['a','b','c','d'];
+  card.innerHTML = `<div class="q-head"><div class="q-num">Question ${i+1} of ${QS.length}</div><div class="q-text">${item.q}</div></div>
+  <div class="q-body">${item.opts.map((o,j)=>`<button class="opt" data-q="${i}" data-j="${j}">(${letters[j]}) ${o}</button>`).join('')}
+  <div class="feedback" id="fb-${i}">${item.fb}</div></div>`;
+  quiz.appendChild(card);
+});
+quiz.addEventListener('click', e => {
+  const btn = e.target.closest('.opt'); if (!btn) return;
+  const qi = +btn.dataset.q, j = +btn.dataset.j;
+  if (answered.has(qi)) return;
+  answered.add(qi);
+  const btns = quiz.querySelectorAll(`.opt[data-q="${qi}"]`);
+  btns.forEach(b => b.disabled = true);
+  if (j === QS[qi].a) { btn.classList.add('correct'); score++; }
+  else { btn.classList.add('wrong'); btns[QS[qi].a].classList.add('correct'); }
+  document.getElementById('fb-'+qi).classList.add('visible');
+  document.getElementById('score').textContent = `${score} / ${QS.length}`;
+});
+</script>
+</body>
+</html>
