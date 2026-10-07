@@ -16,20 +16,122 @@ DATA_NOTE = (
     "\n\nAccording to Reinhart et al. (2025), large language models tend to use more nominal density (nominalizations) and exhibit less modulation of stance and confidence (hedging/boosting) compared to human authors."
 )
 
-# One label per academic paragraph pair, in the order they appear in biber_paragraphs.json
-# (most divergent first). Double-check these by hand.
-TOPIC_LABELS = [
-    "Soil characteristics & fertilizer response",
-    "Divertor neutral dynamics in JET plasmas",
-    "Lifetime earnings profiles & loan repayment",
-    "Airborne carbonyls & lung-cell inflammation",
-    "Measuring ethical consumer behaviour",
-    "Satellite retrieval of coastal water quality",
-    "In vitro–in vivo extrapolation in risk assessment",
-    "Cavitation to remove CRUD in nuclear systems",
-    "Germline-targeting immunogens for HIV",
-    "Aluminium grain-refiner efficiency",
-]
+# One label per academic base document, keyed by its HAP-E base id. Each model's most divergent
+# pairs differ, so there is one entry per passage. Double-check these by hand.
+TOPIC_LABELS = {
+    "acad_0059": "Cognitive control research paradigms across populations",
+    "acad_0060": "Left–right asymmetry of the anterior temporal lobe",
+    "acad_0082": "Structural assumptions in preference-elicitation methods",
+    "acad_0084": "Conserved copper-binding motifs in polyphenol oxidases",
+    "acad_0089": "Growth discourse and state politics",
+    "acad_0099": "Young women's lives and anxieties in rural India",
+    "acad_0130": "Children's false-belief tasks and looking behaviour",
+    "acad_0139": "Instrumenting foreign aid with donor budgets",
+    "acad_0155": "Design decisions in multi-sided platforms",
+    "acad_0182": "Cavitation to remove CRUD in nuclear systems",
+    "acad_0187": "Impact-crater ellipticity and impact angle",
+    "acad_0194": "Satellite retrieval of coastal water quality",
+    "acad_0209": "Pollen analysis and conservation at a museum",
+    "acad_0210": "Hydrogen defects in minerals over geological time",
+    "acad_0234": "Airborne carbonyls & lung-cell inflammation",
+    "acad_0273": "Nutrient recovery from anaerobic digester effluent",
+    "acad_0276": "High-school tracking and educational attainment in Japan",
+    "acad_0283": "Brain stimulation of the motor cortex",
+    "acad_0293": "Global burden of disease and years of life lost",
+    "acad_0294": "Epidemiological transition across Indian states",
+    "acad_0295": "Oil price shocks and OPEC",
+    "acad_0296": "Cooperation on emissions in climate experiments",
+    "acad_0306": "Monitoring tropical forest carbon storage",
+    "acad_0316": "Innate and adaptive immunity in fish",
+    "acad_0318": "Plant biomarkers for reconstructing past vegetation",
+    "acad_0319": "Measuring ethical consumer behaviour",
+    "acad_0347": "Components of financing and economic growth",
+    "acad_0351": "Electrode placement for brain recording",
+    "acad_0366": "Microbial volatile compounds in environmental sources",
+    "acad_0376": "Consumer responses to time-limited offers",
+    "acad_0378": "Endowment heterogeneity and costly punishment",
+    "acad_0411": "Bathymetric LiDAR in shallow water",
+    "acad_0427": "Thermoelectric generation from porous burners",
+    "acad_0438": "Ageing and slow-wave sleep parameters",
+    "acad_0457": "Russian wheat aphid resistance in barley",
+    "acad_0469": "Drop coalescence in micro-channels",
+    "acad_0482": "Shifting cultivation and upland policy",
+    "acad_0494": "Retrofitting buses to cut emissions",
+    "acad_0496": "Designing a home care system",
+    "acad_0501": "Lifetime earnings profiles & loan repayment",
+    "acad_0516": "Health workforce shortages in low- and middle-income countries",
+    "acad_0526": "Anticipatory skin conductance in the Iowa Gambling Task",
+    "acad_0541": "Prescribed burning of UK peatlands",
+    "acad_0542": "Defining the wildland–urban interface",
+    "acad_0552": "Radar backscatter and surface conditions",
+    "acad_0558": "Migrant control over remittance savings",
+    "acad_0562": "Hippocampal damage and semantic memory",
+    "acad_0568": "Pickup-and-delivery routing with public transport",
+    "acad_0574": "Self-help groups and women's confidence",
+    "acad_0582": "Optimising CHP systems with heat storage",
+    "acad_0583": "Centralised and decentralised flexible demand control",
+    "acad_0588": "Mechanisms for peer-to-peer energy sharing",
+    "acad_0606": "Soil characteristics & fertilizer response",
+    "acad_0609": "High-seas fisheries and food security",
+    "acad_0613": "Pressure-induced colour change in meat",
+    "acad_0647": "Forest biomass for bioenergy and carbon losses",
+    "acad_0652": "Modelling agricultural policy: CGE vs. input–output",
+    "acad_0656": "Cytotoxicity of trichothecene mycotoxins",
+    "acad_0659": "Elemental sulfur oxidation in fertilizer granules",
+    "acad_0667": "Fillers and cryoprotectants for high-pressure freezing",
+    "acad_0669": "Hair-cell damage and hearing loss",
+    "acad_0703": "Cassava virus diseases and resistant varieties",
+    "acad_0707": "In vitro–in vivo extrapolation in risk assessment",
+    "acad_0718": "Tuning preferences: equal temperament vs. just intonation",
+    "acad_0731": "Aluminium grain-refiner efficiency",
+    "acad_0748": "Optical fibre sensor limitations",
+    "acad_0749": "Long-period grating coupling wavelength",
+    "acad_0768": "Equity crowdfunding dynamics",
+    "acad_0770": "Species definition in scaled protists",
+    "acad_0791": "Low-carbon cement replacements in concrete",
+    "acad_0796": "Sector abatement costs of emissions",
+    "acad_0802": "Sustainable business model innovation",
+    "acad_0812": "Modelling removal of a surface film",
+    "acad_0817": "Neuronal circuits for fly courtship",
+    "acad_0820": "Labour, inclusion and creative practice in Britain",
+    "acad_0822": "Electric vs. combustion vehicle driving range",
+    "acad_0845": "Self-initiated movement and time perception",
+    "acad_0864": "Reproducibility of whole-brain network estimation",
+    "acad_0866": "High-resolution diffusion MRI at 7 T",
+    "acad_0885": "Gender and communication style online",
+    "acad_0888": "Hippocampal CA2 influence on cortical activity",
+    "acad_0889": "Germline-targeting immunogens for HIV",
+    "acad_0900": "Groundwater use in the Nubian aquifer",
+    "acad_0903": "Fin heat transfer optimisation",
+    "acad_0904": "Hyperspectral imaging of paintings",
+    "acad_0918": "Supercritical CO2 heat-exchanger modelling",
+    "acad_0932": "Real-world energy use of electrified vehicles",
+    "acad_0957": "Singlet oxygen for removing organic pollutants",
+    "acad_0968": "Complexity as a big-data attribute",
+    "acad_0969": "Local perceptions of forests and protected areas",
+    "acad_0975": "Langmuir turbulence in sea-surface temperature models",
+    "acad_0976": "Predicting engraftment in cord blood transplants",
+    "acad_0989": "Cdx proteins and Wnt signalling in neuromesodermal progenitors",
+    "acad_1012": "Gasifying agents in biomass gasification",
+    "acad_1015": "Flexible carbon capture in electricity markets",
+    "acad_1018": "Clustering techniques for science mapping",
+    "acad_1026": "Dynamic systems theory and biological self-organisation",
+    "acad_1036": "Biophysical cues in cell reprogramming",
+    "acad_1037": "Visual representations of protein sequences",
+    "acad_1040": "Fatty acid desaturase classes",
+    "acad_1043": "Thin-film growth by pulsed laser deposition",
+    "acad_1044": "Gallium charge states and gap states",
+    "acad_1079": "Acceptance and commitment therapy in clinical practice",
+    "acad_1128": "Policy studies and energy research",
+    "acad_1131": "Willingness to pay for policy-related behaviours",
+    "acad_1156": "Divertor neutral dynamics in JET plasmas",
+    "acad_1160": "Ochre in the ancient Aegean",
+    "acad_1183": "Scientometric analysis of Internet of Things research",
+    "acad_1197": "Climate vulnerability and development in a sub-region",
+    "acad_1200": "Mucuna pruriens as a nitrogen source",
+    "acad_1207": "Electrodeposited precursors for kesterite solar cells",
+    "acad_1212": "Non-fullerene polymer solar cell donors",
+}
 
 # Bundles of the features most discussed in Reinhart et al. (2025) and DeLuca et al. (2025).
 # Painted as a highlight on matching tokens. "color" is the accent (dots, borders); "hl" gives the
@@ -41,9 +143,16 @@ THEMATIC_GROUPS = {
         "hl": {"light": ("#9fe3c4", "#14151a"), "dark": ("#14634a", "#f4f2ea")},
         "features": [
             "f_14_nominalizations", "f_15_gerunds",
-            "f_25_present_participle", "f_28_present_participle_whiz",
         ],
     },
+    "participles": {
+            "label": "Participles",
+            "color": "#cc79a7",
+            "hl": {"light": ("#f3c6dd", "#14151a"), "dark": ("#7a3358", "#f4f2ea")},
+            "features": [
+                "f_25_present_participle", "f_28_present_participle_whiz",
+            ],
+        },
     "hedging_boosting": {
         "label": "Hedging & Boosting",
         "color": "#1b8dc5",
@@ -64,10 +173,37 @@ THEMATIC_GROUPS = {
     },
 }
 
+BIBER_INTRO = (
+    "Biber's multidimensional framework counts 67 grammatical and stylistic features, such as "
+    "nominalizations, participles, hedges and passives. Every text in the corpus was tagged for these "
+    "features with PyBiber. Here they are bundled into four groups that Reinhart et al. (2025) and "
+    "DeLuca et al. (2025) single out. The chart compares each group's frequency in a model's writing "
+    "with human writing; the paired passages below show the same features in context."
+)
+
+# Shown under the overview chart. {model} and {scope} are filled in by the app.
+BIBER_CHART_NOTE = (
+    "<strong>{model}</strong> vs. human, {scope}. For each group, the frequencies of its features "
+    "(per 1,000 tokens) are summed and averaged over all texts, then compared as a log2 ratio: "
+    "0 means no difference from human writing, +1 means the model uses the group twice as often as "
+    "humans, and &minus;1 means half as often. Bars to the <strong>right</strong> = the model uses "
+    "more. All charts share one scale, so switching models shows relative differences. Hover a bar "
+    "for the raw frequencies and the features in the group."
+)
+
+# Shown above the paired passages.
+BIBER_PASSAGE_NOTE = (
+    "Each model has its own ten passages: the academic texts where its writing differs most from the "
+    "human original on Biber's first dimension of variation, spread across the most divergent "
+    "pairs. Both passages are about 180 words and come from parallel texts that share the same human source. The label after each topic "
+    "names the feature group whose share of tagged tokens differs most between the two passages. "
+    "This comes from one short excerpt, so it can disagree with the corpus-wide chart above."
+)
+
 BIBER_LEGEND = (
     "<strong>Linguistic features</strong> bundle Biber features by the contrasts most cited in "
     "Reinhart et al. (2025): nominal density, hedging &amp; boosting, and agentless/impersonal "
-    "constructions. Choose a group to highlight its features in both passages."
+    "constructions. Choose one or more groups to highlight their features in both passages."
 )
 
 # ── Sentiment ────────────────────────────────────────────────────────────────

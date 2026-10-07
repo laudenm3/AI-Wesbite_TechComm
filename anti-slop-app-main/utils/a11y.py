@@ -11,7 +11,8 @@ which shares the page's origin, so it can adjust the parent document. It fixes r
 only and never moves or deletes an element, so React keeps control of the DOM.
 """
 
-import streamlit.components.v1 as components
+
+import streamlit as st
 
 from utils.style import palette
 
@@ -186,6 +187,6 @@ def patch_streamlit_a11y(show_status: bool = False):
         script = script.replace(token, pal[key])
     if show_status:
         # Full width, or the box is drawn in a frame nobody can see.
-        components.html(script, height=130)
+        st.iframe(script, height=130)
     else:
-        components.html(script, height=0, width=0)
+        st.iframe(script, height=1, width=1)

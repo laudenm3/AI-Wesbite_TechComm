@@ -4,6 +4,7 @@ data/*.json."""
 
 import html
 import json
+import math
 import re
 from pathlib import Path
 
@@ -11,7 +12,7 @@ import streamlit as st
 
 from content.hape_analysis import (
     AI_FAMILIES, AI_GROUP_LABELS, AI_GROUP_ORDER, AUTHOR_DISPLAY,
-    BIBER_LEGEND, DATA_NOTE, PAGE_INTRO, SENTIMENT_INTRO,
+    BIBER_CHART_NOTE, BIBER_INTRO, BIBER_LEGEND, BIBER_PASSAGE_NOTE, DATA_NOTE, PAGE_INTRO, SENTIMENT_INTRO,
     THEMATIC_GROUPS, TOP_N_EMOTIONS, TOPIC_LABELS, VALENCE_COLOR,
 )
 from utils.style import DARK, banner, callout, palette
@@ -104,13 +105,16 @@ NO_SPACE_AFTER = re.compile(r"[(\[{‘“]$")
 FEATURE_TO_THEME = {f: k for k, g in THEMATIC_GROUPS.items() for f in g["features"]}
 
 
-def render_tokens(tokens: list[dict], group: str | None) -> str:
-    """Join tokens into HTML, highlighting tokens that belong to the chosen thematic group."""
+def render_tokens(tokens: list[dict], groups: list[str] | None) -> str:
+    """Join tokens into HTML, highlighting tokens that belong to a chosen thematic group
+    (the first chosen group, in THEMATIC_GROUPS order, wins when a token matches several)."""
+    wanted = [g for g in THEMATIC_GROUPS if g in (groups or [])]
     parts = []
     for i, tok in enumerate(tokens):
         body = esc(tok["t"])
-        if group and any(FEATURE_TO_THEME.get(f) == group for f in tok.get("f", [])):
-            body = f'<span class="hape-hl {group}">{body}</span>'
+        hit = next((g for g in wanted if any(FEATURE_TO_THEME.get(f) == g for f in tok.get("f", []))), None)
+        if hit:
+            body = f'<span class="hape-hl {hit}">{body}</span>'
         if i > 0 and not NO_SPACE_BEFORE.match(tok["t"]) and not NO_SPACE_AFTER.search(tokens[i - 1]["t"]):
             parts.append(" ")
         parts.append(body)
@@ -125,34 +129,101 @@ def para_card(css_class: str, badge: str, inner_html: str, summary_html: str = "
     )
 
 
+BIBER_SMOOTH = 0.1  # per 1,000 tokens, matches the smoothing in the notebook's feature ratios
+
+
+def feature_name(feature: str) -> str:
+    return re.sub(r"^f_\d+_", "", feature).replace("_", " ")
+
+
+def group_density(tokens: list[dict], group: str) -> float:
+    """Share of tokens carrying any feature of a thematic group, lightly smoothed."""
+    hits = sum(any(FEATURE_TO_THEME.get(f) == group for f in t.get("f", [])) for t in tokens)
+    return (hits + 0.5) / (len(tokens) + 1)
+
+
+def pair_contrast(human: list[dict], other: list[dict], other_name: str) -> str:
+    """'more nominal density in Human': the thematic group whose density differs most."""
+    best, best_val = None, 0.0
+    for g in THEMATIC_GROUPS:
+        val = math.log2(group_density(other, g) / group_density(human, g))
+        if abs(val) >= abs(best_val):
+            best, best_val = g, val
+    label = THEMATIC_GROUPS[best]["label"]
+    return f"more {label.lower()} in {display_author('human') if best_val < 0 else other_name}"
+
+
 def biber_tab():
     data = load_json("biber_paragraphs.json")
-    pairs = data["paragraphsByGenre"]["acad"]  # the Biber view uses academic prose only
-    name_a, name_b = display_author(data["authorA"]), display_author(data["authorB"])
+    all_loadings, rates = data["featureLoadings"], data["featureRates"]
+    human_tokens, model_pairs = data["humanTokens"], data["modelPairs"]
+    author_a = data.get("authorA", "human")
+    scope_label = data.get("scopeLabel", "across all six genres")
 
-    topics = [TOPIC_LABELS[i] if i < len(TOPIC_LABELS) else f"Topic {i + 1}" for i in range(len(pairs))]
-    topic = st.selectbox("Topic", topics, key="hape_topic")
-    pair = pairs[topics.index(topic)]
-    examples = pair["examples"]
-    n_ex = 0
-    if len(examples) > 1:
-        n_ex = st.segmented_control(
-            "Example", range(len(examples)), default=0, format_func=lambda i: str(i + 1),
-            key=f"hape_example_{topics.index(topic)}",
-        ) or 0
-    ex = examples[n_ex]
+    callout("info", BIBER_INTRO)
+
+    # High level: which feature groups does a model use more or less than humans? Same groups
+    # as the highlighting below; a group's rate is the sum of its features' per-1,000-token rates.
+    group = model_picker(all_loadings, rates, "hape_biber")
+    model_name = AI_GROUP_LABELS.get(group, group)
+    human_rates, group_rates = rates.get(author_a, {}).get("rates", {}), rates.get(group, {}).get("rates", {})
+    shown = st.session_state.get("hape_theme") or []
+    def group_ratio(rate_map: dict, g: dict) -> tuple[float, float, float]:
+        h = sum(human_rates.get(f, 0) for f in g["features"])
+        m = sum(rate_map.get(f, 0) for f in g["features"])
+        return h, m, math.log2((m + BIBER_SMOOTH) / (h + BIBER_SMOOTH))
+
+    # One scale for every model, so switching models shows relative differences, not a rescale.
+    scale = max(abs(group_ratio(r["rates"], g)[2]) for name, r in rates.items() if name != author_a
+                for g in THEMATIC_GROUPS.values())
+    rows = []
+    for key, g in THEMATIC_GROUPS.items():       # fixed order: the order of THEMATIC_GROUPS
+        h, m, val = group_ratio(group_rates, g)
+        rows.append({
+            "name": g["label"], "val": val, "on": key in shown, "color": g["color"],
+            "tip": (f"{g['label']}: human {h:.1f}, {model_name} {m:.1f} per 1,000 tokens (log2 ratio "
+                    f"{val:.2f}). Features: {', '.join(feature_name(f) for f in g['features'])}"),
+        })
+    loadings_chart(
+        rows,
+        BIBER_CHART_NOTE.format(model=esc(model_name), scope=esc(scope_label)),
+        max_abs=scale)
+
+    # Low level: one of the chosen model's most divergent topics. Passages exist per individual
+    # model, so a family or "All LLMs" selection falls back to its first model with passages.
+    st.write("")
+    default_model = data.get("authorB", "gemma-2-9b-it")
+    if group in model_pairs:
+        model = group
+    else:
+        members = [m for m in AI_GROUP_ORDER if m in model_pairs and (group == "machine" or m.startswith(group + "-"))]
+        model = default_model if group == "machine" and default_model in model_pairs else members[0]
+        st.caption(f"Passages below are from {AI_GROUP_LABELS.get(model, model)}; choose an individual "
+                   f"model above to read another.")
+    other_name = AI_GROUP_LABELS.get(model, model)
+    pairs = model_pairs[model]
+    st.caption(BIBER_PASSAGE_NOTE)
+
+    def topic_label(i: int) -> str:
+        base = pairs[i]["baseId"]
+        topic = TOPIC_LABELS.get(base, base)
+        return f"{topic}: {pair_contrast(human_tokens[base], pairs[i]['tokens'], other_name)}"
+
+    n = st.selectbox("Topic", range(len(pairs)), key=f"hape_topic_{model}", format_func=topic_label)
+    pair = pairs[n]
 
     with st.container(border=True):
-        group = st.selectbox(
-            "Linguistic Features", [None, *THEMATIC_GROUPS], key="hape_theme",
-            format_func=lambda k: "None (no highlighting)" if k is None else THEMATIC_GROUPS[k]["label"],
+        theme = st.multiselect(
+            "Linguistic Features", list(THEMATIC_GROUPS), key="hape_theme",
+            format_func=lambda k: THEMATIC_GROUPS[k]["label"],
+            help="Choose one or more feature groups to highlight in both passages.",
         )
 
     left, right = st.columns(2)
     with left:
-        para_card("", name_a, render_tokens(ex["aTokens"], group))
+        para_card("", display_author(author_a), render_tokens(human_tokens[pair["baseId"]], theme))
     with right:
-        para_card("b", name_b, render_tokens(ex["bTokens"], group))
+        para_card("b", other_name, render_tokens(pair["tokens"], theme))
 
     legend(BIBER_LEGEND)
 
@@ -168,26 +239,43 @@ def group_label(group: str, rates: dict) -> str:
     return AI_GROUP_LABELS.get(group, group) + (f" ({n:,})" if n else "")
 
 
-def loadings_chart(entries: list, meta: dict, active: set, caption: str,
-                   human_rates: dict, group_rates: dict, group_name: str):
-    max_abs = max([0.01] + [abs(v) for _, v in entries])
-    rows = []
-    for emo, val in entries:
-        color = VALENCE_COLOR[meta.get(emo, {}).get("valence", "ambiguous")]
-        width = abs(val) / max_abs * 50
-        if val >= 0:
-            bar = f'<div class="hape-bar" style="left:50%;width:{width}%;background:{color}"></div>'
+def loadings_chart(rows: list[dict], caption: str, max_abs: float | None = None):
+    """Diverging bars of log2 ratios. Each row: name, val, color, tip, on (highlighted).
+    Pass max_abs to hold the scale fixed across charts."""
+    max_abs = max_abs or max([0.01] + [abs(r["val"]) for r in rows])
+    out = []
+    for r in rows:
+        width = abs(r["val"]) / max_abs * 50
+        if r["val"] >= 0:
+            bar = f'<div class="hape-bar" style="left:50%;width:{width}%;background:{r["color"]}"></div>'
         else:
-            bar = f'<div class="hape-bar" style="right:50%;width:{width}%;background:{color};opacity:0.5"></div>'
-        tip = (f"{emo}: human {human_rates.get(emo, 0) * 100:.2f}% of sentences, "
-               f"{group_name} {group_rates.get(emo, 0) * 100:.2f}% (log2 ratio {val:.2f})")
-        rows.append(
-            f'<div class="hape-row{" on" if emo in active else ""}" title="{esc(tip)}">'
-            f'<div class="hape-name"><span>{esc(emo)}</span><span class="hape-dot" style="background:{color}"></span></div>'
-            f'<div class="hape-track">{bar}</div><div class="hape-val">{val:+.2f}</div></div>'
+            bar = f'<div class="hape-bar" style="right:50%;width:{width}%;background:{r["color"]};opacity:0.5"></div>'
+        out.append(
+            f'<div class="hape-row{" on" if r["on"] else ""}" title="{esc(r["tip"])}">'
+            f'<div class="hape-name"><span>{esc(r["name"])}</span><span class="hape-dot" style="background:{r["color"]}"></span></div>'
+            f'<div class="hape-track">{bar}</div><div class="hape-val">{r["val"]:+.2f}</div></div>'
         )
-    st.markdown(f'<div class="hape-bars"><div class="cap">{caption}</div>{"".join(rows)}</div>',
+    st.markdown(f'<div class="hape-bars"><div class="cap">{caption}</div>{"".join(out)}</div>',
                 unsafe_allow_html=True)
+
+
+def model_picker(loadings: dict, rates: dict, key: str) -> str:
+    """AI model: a family row, then (for a family) a row for its individual models."""
+    keys = group_keys(loadings)
+    families = [g for g in keys if g in AI_FAMILIES or not any(
+        g.startswith(f + "-") for f in AI_FAMILIES)]
+    family = st.segmented_control(
+        "AI model", families, default="machine" if "machine" in keys else keys[0],
+        format_func=lambda g: group_label(g, rates), key=f"{key}_family",
+    ) or "machine"
+    models = [g for g in keys if g.startswith(family + "-")]
+    if not models:
+        return family
+    return st.segmented_control(
+        f"{AI_GROUP_LABELS.get(family, family)} models", [family] + models, default=family,
+        format_func=lambda g: ("All " if g == family else "") + group_label(g, rates),
+        key=f"{key}_model_{family}",
+    ) or family
 
 
 def sentence_html(sent: dict, meta: dict, active: set) -> str:
@@ -218,28 +306,13 @@ def summary_html(s: dict | None) -> str:
 def sentiment_tab():
     data = load_json("emotions_paragraphs.json")
     meta, all_loadings, rates = data["emotionMeta"], data["emotionLoadings"], data["emotionRates"]
-    pairs = data["paragraphs"]
+    pairs = [p for p in data["paragraphs"] if "emotion" in p]  # drop the generic "Pair 1-3" samples
     author_a, author_b = data.get("authorA", "human"), data.get("authorB", "AI")
     scope_label = data.get("scopeLabel", "across all six genres")
 
     callout("info", SENTIMENT_INTRO)
 
-    # AI model: a family row, then (for a family) a row for its individual models.
-    keys = group_keys(all_loadings)
-    families = [g for g in keys if g in AI_FAMILIES or not any(
-        g.startswith(f + "-") for f in AI_FAMILIES)]
-    family = st.segmented_control(
-        "AI model", families, default="machine" if "machine" in keys else keys[0],
-        format_func=lambda g: group_label(g, rates), key="hape_family",
-    ) or "machine"
-    models = [g for g in keys if g.startswith(family + "-")]
-    group = family
-    if models:
-        group = st.segmented_control(
-            f"{AI_GROUP_LABELS.get(family, family)} models", [family] + models, default=family,
-            format_func=lambda g: ("All " if g == family else "") + group_label(g, rates),
-            key=f"hape_model_{family}",
-        ) or family
+    group = model_picker(all_loadings, rates, "hape_emo")
 
     loads = all_loadings.get(group, {})
     entries = sorted(loads.items(), key=lambda kv: abs(kv[1]), reverse=True)[:TOP_N_EMOTIONS]
@@ -252,15 +325,17 @@ def sentiment_tab():
     caption = (f"Sentence-level GoEmotions firing rate, <strong>{esc(model_name)}</strong> vs. human, "
                f"{esc(scope_label)}. Top {TOP_N_EMOTIONS} emotions by relative difference; bars "
                f'<strong>right</strong> = AI expresses more.')
-    loadings_chart(entries, meta, active, caption,
-                   rates.get(author_a, {}).get("rates", {}), rates.get(group, {}).get("rates", {}),
-                   model_name)
+    human_rates, group_rates = rates.get(author_a, {}).get("rates", {}), rates.get(group, {}).get("rates", {})
+    loadings_chart([{
+        "name": emo, "val": val, "on": emo in active,
+        "color": VALENCE_COLOR[meta.get(emo, {}).get("valence", "ambiguous")],
+        "tip": (f"{emo}: human {human_rates.get(emo, 0) * 100:.2f}% of sentences, "
+                f"{model_name} {group_rates.get(emo, 0) * 100:.2f}% (log2 ratio {val:.2f})"),
+    } for emo, val in entries], caption)
 
     st.write("")
     def sample_label(i: int) -> str:
         p = pairs[i]
-        if "emotion" not in p:
-            return p.get("topic") or f"Pair {i + 1}"
         return (f"{p['emotion'].capitalize()}: AI {p['direction']} than human "
                 f"({p['genre']}, {model_name_of(p, author_b)})")
 
