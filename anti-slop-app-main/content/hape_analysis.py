@@ -173,6 +173,11 @@ THEMATIC_GROUPS = {
     },
 }
 
+# The pattern reported by Reinhart et al. (2025): more of these in the LLM, more of those in the human.
+# A topic's label names the matching group when the passage pair shows it, and is left plain otherwise.
+LLM_MORE_GROUPS = {"nominal_density", "participles"}
+HUMAN_MORE_GROUPS = {"hedging_boosting", "agentless_impersonal"}
+
 BIBER_INTRO = (
     "Biber's multidimensional framework counts 67 grammatical and stylistic features, such as "
     "nominalizations, participles, hedges and passives. Every text in the corpus was tagged for these "
@@ -195,9 +200,11 @@ BIBER_CHART_NOTE = (
 BIBER_PASSAGE_NOTE = (
     "Each model has its own ten passages: the academic texts where its writing differs most from the "
     "human original on Biber's first dimension of variation, spread across the most divergent "
-    "pairs. Both passages are about 180 words and come from parallel texts that share the same human source. The label after each topic "
-    "names the feature group whose share of tagged tokens differs most between the two passages. "
-    "This comes from one short excerpt, so it can disagree with the corpus-wide chart above."
+    "pairs. Both passages are about 180 words and come from parallel texts that share the same human source. "
+    "A label after the topic appears when the pair shows the pattern reported in the research: more "
+    "nominal density or participles in the LLM, or more hedging &amp; boosting or agentless passives in the "
+    "human. It names the group with the largest such difference in that one short excerpt, so it can "
+    "disagree with the corpus-wide chart above."
 )
 
 BIBER_LEGEND = (

@@ -12,7 +12,7 @@ import streamlit as st
 
 from content.hape_analysis import (
     AI_FAMILIES, AI_GROUP_LABELS, AI_GROUP_ORDER, AUTHOR_DISPLAY,
-    BIBER_CHART_NOTE, BIBER_INTRO, BIBER_LEGEND, BIBER_PASSAGE_NOTE, DATA_NOTE, PAGE_INTRO, SENTIMENT_INTRO,
+    BIBER_CHART_NOTE, BIBER_INTRO, BIBER_LEGEND, BIBER_PASSAGE_NOTE, HUMAN_MORE_GROUPS, LLM_MORE_GROUPS, DATA_NOTE, PAGE_INTRO, SENTIMENT_INTRO,
     THEMATIC_GROUPS, TOP_N_EMOTIONS, TOPIC_LABELS, VALENCE_COLOR,
 )
 from utils.style import DARK, banner, callout, palette
@@ -79,6 +79,8 @@ def page_css(p: dict) -> str:
 .hape-track {{ position: relative; height: 16px; background: {p['INPUT']}; border-radius: 2px; }}
 .hape-track::before {{ content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: {p['BORDER']}; }}
 .hape-bar {{ position: absolute; top: 2px; bottom: 2px; border-radius: 2px; }}
+.hape-axis-track {{ display: flex; justify-content: space-between; font-size: 0.72rem;
+  font-variant-numeric: tabular-nums; border-top: 1px solid {p['BORDER']}; padding-top: 2px; }}
 .hape-val {{ font-size: 0.78rem; font-variant-numeric: tabular-nums; }}
 .hape-sent, .hape-sent * {{ color: {p['TEXT']}; }}
 .hape-sent {{ display: block; padding: 5px 9px; margin: 2px 0; border-radius: 3px; line-height: 1.65;
@@ -143,14 +145,19 @@ def group_density(tokens: list[dict], group: str) -> float:
 
 
 def pair_contrast(human: list[dict], other: list[dict], other_name: str) -> str:
-    """'more nominal density in Human': the thematic group whose density differs most."""
+    """'more nominal density in GPT-4o' when the pair shows the expected pattern, else ''.
+    Expected: more of LLM_MORE_GROUPS in the LLM, or more of HUMAN_MORE_GROUPS in the human.
+    The largest such difference names the pair."""
     best, best_val = None, 0.0
     for g in THEMATIC_GROUPS:
         val = math.log2(group_density(other, g) / group_density(human, g))
-        if abs(val) >= abs(best_val):
+        expected = (g in LLM_MORE_GROUPS and val > 0) or (g in HUMAN_MORE_GROUPS and val < 0)
+        if expected and abs(val) > abs(best_val):
             best, best_val = g, val
-    label = THEMATIC_GROUPS[best]["label"]
-    return f"more {label.lower()} in {display_author('human') if best_val < 0 else other_name}"
+    if best is None:
+        return ""
+    label = THEMATIC_GROUPS[best]["label"].lower()
+    return f"more {label} in {display_author('human') if best_val < 0 else other_name}"
 
 
 def biber_tab():
@@ -207,7 +214,8 @@ def biber_tab():
     def topic_label(i: int) -> str:
         base = pairs[i]["baseId"]
         topic = TOPIC_LABELS.get(base, base)
-        return f"{topic}: {pair_contrast(human_tokens[base], pairs[i]['tokens'], other_name)}"
+        result = pair_contrast(human_tokens[base], pairs[i]["tokens"], other_name)
+        return f"{topic}: {result}" if result else topic
 
     n = st.selectbox("Topic", range(len(pairs)), key=f"hape_topic_{model}", format_func=topic_label)
     pair = pairs[n]
@@ -255,7 +263,9 @@ def loadings_chart(rows: list[dict], caption: str, max_abs: float | None = None)
             f'<div class="hape-name"><span>{esc(r["name"])}</span><span class="hape-dot" style="background:{r["color"]}"></span></div>'
             f'<div class="hape-track">{bar}</div><div class="hape-val">{r["val"]:+.2f}</div></div>'
         )
-    st.markdown(f'<div class="hape-bars"><div class="cap">{caption}</div>{"".join(out)}</div>',
+    axis = (f'<div class="hape-row axis"><div></div><div class="hape-axis-track"><span>&minus;{max_abs:.2f}</span>'
+            f'<span>0</span><span>+{max_abs:.2f}</span></div><div></div></div>')
+    st.markdown(f'<div class="hape-bars"><div class="cap">{caption}</div>{"".join(out)}{axis}</div>',
                 unsafe_allow_html=True)
 
 
@@ -314,12 +324,12 @@ def sentiment_tab():
 
     group = model_picker(all_loadings, rates, "hape_emo")
 
+    # One scale for every model, so switching models shows relative differences, not a rescale.
+    scale = max(abs(v) for load in all_loadings.values()
+                for v in sorted(load.values(), key=abs, reverse=True)[:TOP_N_EMOTIONS])
     loads = all_loadings.get(group, {})
     entries = sorted(loads.items(), key=lambda kv: abs(kv[1]), reverse=True)[:TOP_N_EMOTIONS]
-    active = set(st.multiselect(
-        "Highlight emotions in the passages", sorted(meta), key="hape_emotions",
-        help="Choose one or more emotions to tint the sentences where they fire.",
-    ))
+    chart_active = set(st.session_state.get("hape_emotions", []))  # the picker sits below the chart
 
     model_name = AI_GROUP_LABELS.get(group, group)
     caption = (f"Sentence-level GoEmotions firing rate, <strong>{esc(model_name)}</strong> vs. human, "
@@ -327,11 +337,11 @@ def sentiment_tab():
                f'<strong>right</strong> = AI expresses more.')
     human_rates, group_rates = rates.get(author_a, {}).get("rates", {}), rates.get(group, {}).get("rates", {})
     loadings_chart([{
-        "name": emo, "val": val, "on": emo in active,
+        "name": emo, "val": val, "on": emo in chart_active,
         "color": VALENCE_COLOR[meta.get(emo, {}).get("valence", "ambiguous")],
         "tip": (f"{emo}: human {human_rates.get(emo, 0) * 100:.2f}% of sentences, "
                 f"{model_name} {group_rates.get(emo, 0) * 100:.2f}% (log2 ratio {val:.2f})"),
-    } for emo, val in entries], caption)
+    } for emo, val in entries], caption, max_abs=scale)
 
     st.write("")
     def sample_label(i: int) -> str:
@@ -352,6 +362,11 @@ def sentiment_tab():
                           "chart's direction.")
     pair = pairs[n]
     ex = pair["examples"][0]
+
+    active = set(st.multiselect(
+        "Highlight emotions in the passages", sorted(meta), key="hape_emotions",
+        help="Choose one or more emotions to tint the sentences where they fire.",
+    ))
 
     left, right = st.columns(2)
     with left:
